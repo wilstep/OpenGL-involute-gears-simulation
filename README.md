@@ -9,4 +9,9 @@ command at the command line, then
 
 `gear`
 
-to run
+to run. Try installing the following packages 
+
+`libglfw3-dev
+libglu1-mesa-dev 
+freeglut3-dev 
+mesa-common-dev`
