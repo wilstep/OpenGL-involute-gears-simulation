@@ -9,7 +9,7 @@ command at the command line, then
 
 `gear`
 
-to run. Try installing the following packages 
+to run. Try installing the following packages on a Debian based system
 
 `libglfw3-dev
 libglu1-mesa-dev 
