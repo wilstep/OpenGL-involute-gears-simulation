@@ -1,17 +1,12 @@
 # OpenGL-involute-gears-simulation
 A realistic graphical simulation of one involute gear driving another
 
-This software is for Linux, to compile issue the
+This software is written with QT creator and uses OpenGL
 
+to compile 
+
+`qmake gear.pro`
 `make`
 
-command at the command line, then 
-
+then run
 `gear`
-
-to run. Try installing the following packages on a Debian based system
-
-`libglfw3-dev
-libglu1-mesa-dev 
-freeglut3-dev 
-mesa-common-dev`
