@@ -24,6 +24,10 @@ public:
     void setNa(GLuint x) { Na = x; }
     void setNb(GLuint x) { Nb = x; }
     void rebuild() { rebuild_flg = true; }
+    void setSpeed(float x){ speed = x; }
+    void setLightX(float x){ lightX = x; }
+    void setLightY(float y){ lightY = y; }
+    void setLightZ(float z){ lightZ = z; }
 protected:
     void initializeGL();
     void paintGL();
@@ -34,7 +38,7 @@ protected:
     int rotate;
     GLuint shaderProgram;
     GLuint vao, vbo, ebo;
-    GLint uni, uniColor;
+    GLint uni, uniColor, uniPerspective, uniLightPos;
     QPoint lastPos;
     bool paused = false;
     QQuaternion QuatOrient; // initialise to unit quaternion
@@ -45,6 +49,8 @@ protected:
     const double delTheta = 0.1;
     double theta_a = 0.0, theta_b = 0.0;
     bool rebuild_flg = false;
+    float speed = 5.0;
+    float lightX, lightY, lightZ;
 };
 
 #endif // OGLWIDGET_H

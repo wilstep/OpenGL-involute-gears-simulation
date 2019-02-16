@@ -32,6 +32,14 @@ private slots:
     void on_radioButton_25_clicked();
     void on_spinBox_Na_editingFinished();
     void on_spinBox_Nb_editingFinished();
+    void on_horizontalScrollBar_valueChanged(int value);
+
+    void on_lightPosX_editingFinished();
+
+    void on_lightPosY_editingFinished();
+
+    void on_lightPosZ_editingFinished();
+
 private:
     Ui::MainWindow *ui;
     std::unique_ptr<QTimer> timer;

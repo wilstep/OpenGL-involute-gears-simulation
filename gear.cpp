@@ -22,9 +22,9 @@ static const float Df = 2.157f; // tooth depth
 static const unsigned int Ninv = 11; // number of involute vertices on one side of tooth
 
 
-gear::gear(unsigned int Ni, float pai):N(Ni), nVertices(8*(1+Ninv)*Ni+2), nIndices(24*Ninv*Ni),
+gear::gear(unsigned int Ni, float pai, float dZ):N(Ni), nVertices(8*(1+Ninv)*Ni+2), nIndices(24*Ninv*Ni),
     n1indices(Ni *(12*Ninv+6)), rp((float) Ni / 2.0f), rbc(rp * cos(pai)), rmaj((float) (Ni+2) / 2.0f),
-    rmin((float) (Ni+2) / 2.0f - Df), delZ(3.5f), pa(pai), cospa(cos(pai)), sinpa(sin(pai))
+    rmin((float) (Ni+2) / 2.0f - Df), delZ(dZ), pa(pai), cospa(cos(pai)), sinpa(sin(pai))
 {
     verts.resize(6*nVertices);
     vert_it = verts.end() - 12; // offset for centre verticies

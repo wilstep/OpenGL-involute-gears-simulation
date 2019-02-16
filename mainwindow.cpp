@@ -24,6 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->myOGLWidget->setNa(Na);
     ui->myOGLWidget->setNb(Nb);
     ui->myOGLWidget->setPa(pa);
+    ui->myOGLWidget->setLightX((float) ui->lightPosX->value());
+    ui->myOGLWidget->setLightY((float) ui->lightPosY->value());
+    ui->myOGLWidget->setLightZ((float) ui->lightPosZ->value());
 }
 
 MainWindow::~MainWindow()
@@ -119,3 +122,26 @@ void MainWindow::drawOpenGL()
 }
 
 
+void MainWindow::on_horizontalScrollBar_valueChanged(int value)
+{
+    float speed = (float) value * 0.25f;
+    ui->myOGLWidget->setSpeed(speed);
+}
+
+void MainWindow::on_lightPosX_editingFinished()
+{
+    float x = (float) ui->lightPosX->value();
+    ui->myOGLWidget->setLightX(x);
+}
+
+void MainWindow::on_lightPosY_editingFinished()
+{
+    float y = (float) ui->lightPosY->value();
+    ui->myOGLWidget->setLightY(y);
+}
+
+void MainWindow::on_lightPosZ_editingFinished()
+{
+    float z = (float) ui->lightPosZ->value();
+    ui->myOGLWidget->setLightZ(z);
+}

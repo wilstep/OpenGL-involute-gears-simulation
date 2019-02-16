@@ -8,7 +8,7 @@
 class gear
 {
 public:
-    gear(unsigned int Ni, float pai);
+    gear(unsigned int Ni, float pai, float dZ);
     ~gear();
     std::vector<float>& GetVerts(){ return verts; };
     std::vector<unsigned int>& GetInds(){ return inds; };

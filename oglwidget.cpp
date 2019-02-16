@@ -18,29 +18,42 @@
 
 static const char *vertexShaderSource = R"glsl(
     #version 130
-    in vec3 posAttr;
-    in vec3 colAttr;
-    out vec3 vcol;
+    in vec3 aPos;
+    in vec3 aNormal;
+    out vec3 Normal, FragPos;
 
     uniform mat4 matrix;
+    uniform mat4 perspective;
 
     void main()
     {
-       vcol = colAttr;
-       gl_Position = matrix * vec4(posAttr, 1.0);
+       gl_Position = perspective * matrix * vec4(aPos, 1.0);
+       Normal = vec3(matrix * vec4(aNormal, 0.0));
     }
 )glsl";
 
 static const char *fragmentShaderSource = R"glsl(
     #version 130
-    in vec3 vcol;
+    in vec3 Normal;
+    in vec3 FragPos;
     out vec4 outColor;
 
     uniform vec3 triangleColor;
+    uniform vec3 lightPos;
 
     void main()
     {
-       outColor = vec4(triangleColor, 1.0);
+        //vec3 lightPos = vec3(50.0f, 400.0f, 150.0f);
+        vec3 lightColor = vec3(0.9, 0.9, 0.9);
+        float ambientStrength = 0.2;
+
+        vec3 ambient = ambientStrength * lightColor;
+        vec3 lightDir = normalize(lightPos - FragPos);
+        vec3 norm = Normal;
+        float diff = max(dot(norm, lightDir), 0.0);
+        vec3 diffuse = diff * lightColor;
+        vec3 result = (ambient + diffuse) * triangleColor;
+        outColor = vec4(result, 1.0);
     }
 )glsl";
 
@@ -78,8 +91,8 @@ void OGLWidget::initializeGL()
             std::string str = "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" + std::string(infoLog);
             throw std::runtime_error(str);
         }
-        glBindAttribLocation(vertexShader, 0, "posAttr");
-        glBindAttribLocation(vertexShader, 1, "colAttr");
+        glBindAttribLocation(vertexShader, 0, "aPos");
+        glBindAttribLocation(vertexShader, 1, "aNormal");
         // Create and compile the fragment shader
         GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
@@ -103,6 +116,8 @@ void OGLWidget::initializeGL()
     // enable depth testing
     glEnable(GL_DEPTH_TEST);
     uni = glGetUniformLocation(shaderProgram, "matrix");
+    uniPerspective = glGetUniformLocation(shaderProgram, "perspective");
+    uniLightPos = glGetUniformLocation(shaderProgram, "lightPos");
     uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
     std::cout << "\nOpenGL core profile version string: " << glGetString(GL_VERSION) << std::endl;
     std::cout << "OpenGL shading language version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
@@ -113,8 +128,8 @@ void OGLWidget::initializeGL()
 void  OGLWidget::buildGears(bool redo)
 {
     if(redo) std::cout << "not my first time: Woot!\n";
-    auto myGa = std::make_unique<gear>(Na, pa);
-    auto myGb = std::make_unique<gear>(Nb, pa);
+    auto myGa = std::make_unique<gear>(Na, pa, 4.001f);
+    auto myGb = std::make_unique<gear>(Nb, pa, 4.0f);
 
     Nind_a = myGa -> GetNInds();
     Nind1_a = myGa -> GetN1Inds();
@@ -190,7 +205,7 @@ void OGLWidget::mouseMoveEvent(QMouseEvent *event)
 
     // Is shift button being held down
     if(Qt::ShiftModifier == QApplication::keyboardModifiers()){ // translate in x,y plane
-        const float xmin = 0.9 * delZ;
+        const float xmin = 2.0 * delZ;
         const float xmax = -xmin;
         const float ymin = xmin * (float) yCentre / (float) xCentre;
         const float ymax = -ymin;
@@ -238,12 +253,20 @@ void OGLWidget::mouseMoveEvent(QMouseEvent *event)
 
 void OGLWidget::incRotate()
 {
-    theta_a -= delTheta;
-    theta_b += delTheta * (double) Na / (double) Nb;
+    theta_a -= speed * delTheta;
+    theta_b += speed * delTheta * (double) Na / (double) Nb;
 }
 
 void OGLWidget::paintGL()
 {
+    static bool first = true;
+    if(first){
+        QMatrix4x4 matrix;
+        matrix.perspective(45.0f, 4.0f/3.0f, 0.1f, 280.0f);
+        glUniformMatrix4fv(uniPerspective, 1, GL_FALSE, matrix.data());
+        first = false;
+    }
+    glUniform3f(uniLightPos, lightX, lightY, lightZ); // position for light source
     if(rebuild_flg){
         rebuild_flg = false;
         buildGears(true);
@@ -256,7 +279,7 @@ void OGLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     QMatrix4x4 matrix_a;
-    matrix_a.perspective(45.0f, 4.0f/3.0f, 0.1f, 180.0f);
+    //matrix_a.perspective(45.0f, 4.0f/3.0f, 0.1f, 280.0f);
     matrix_a.translate(delX, delY, delZ);
     QMatrix4x4 matrix_b(QuatOrient.toRotationMatrix()); // borrow matrix_b as a buffer variable
     matrix_a = matrix_a * matrix_b;
