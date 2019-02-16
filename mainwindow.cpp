@@ -39,6 +39,11 @@ void MainWindow::on_quitButton_clicked()
     close();
 }
 
+void MainWindow::on_resetButton_clicked()
+{
+    ui->myOGLWidget->reset();
+}
+
 void MainWindow::on_pausePlayButton_clicked()
 {
     if(pause){ // activate simulation
@@ -98,6 +103,7 @@ void MainWindow::on_spinBox_Na_editingFinished()
         Na = N;
         ui->myOGLWidget->setNa(Na);
         rebuildGears = true;
+        ui->myOGLWidget->reZeroThetas();
         std::cout << "Na = " << Na << std::endl;
     }
 }
@@ -109,6 +115,7 @@ void MainWindow::on_spinBox_Nb_editingFinished()
         Nb = N;
         ui->myOGLWidget->setNb(Nb);
         rebuildGears = true;
+        ui->myOGLWidget->reZeroThetas();
         std::cout << "Nb = " << Nb << std::endl;
     }
 }

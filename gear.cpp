@@ -403,7 +403,7 @@ void gear::involute_pure()
 
 void gear::involute_part()
 {
-    float x, y, r, dx, dy;
+    float x, y, r;
     float xd, yd;
     float theta, norm;
     float cost, sint;
@@ -435,7 +435,7 @@ void gear::involute_part()
     invo_curve_x[0] = x * rmin / r;
     invo_curve_y[0] = y * rmin / r;
     theta *= 0.5; // half way between pitch circle and base circle
-    for(int i=2; i<Ninv; ++i){
+    for(unsigned int i=2; i<Ninv; ++i){
         if(i==n1) continue;  // on pitch circle
         if(i < n1) r = 0.5 * (rp - rbc) + rbc;
         else r = (float)(i - n1) / (float) n1 * (rmaj - rp) + rp;
@@ -468,7 +468,7 @@ void gear::NewtonRaphson(unsigned int n, const float r, float &theta, float &x, 
     float rx;
     float del_theta;
 
-    for(int i=0; i<n; ++i){
+    for(unsigned int i=0; i<n; ++i){
         cost = cos(pa + theta);
         sint = sin(pa + theta);
         x = -rbc * sint + rp * (sinpa + theta * cospa) * cost;
@@ -496,7 +496,7 @@ void gear::RotateVerts(float theta)
     const float sinx = sin(theta);
     float x, y;
 
-    for(int i=0, j; i<nVertices; ++i){
+    for(unsigned int i=0, j; i<nVertices; ++i){
         j = i * 6;
         x = verts[j];
         y = verts[j+1];

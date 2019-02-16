@@ -40,6 +40,8 @@ private slots:
 
     void on_lightPosZ_editingFinished();
 
+    void on_resetButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     std::unique_ptr<QTimer> timer;

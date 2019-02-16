@@ -28,6 +28,8 @@ public:
     void setLightX(float x){ lightX = x; }
     void setLightY(float y){ lightY = y; }
     void setLightZ(float z){ lightZ = z; }
+    void reset() { delX = delY = 0.0f; delZ = delZ0; QuatOrient = QQuaternion(); }
+    void reZeroThetas() { theta_a = theta_b = 0.0; }
 protected:
     void initializeGL();
     void paintGL();
@@ -43,7 +45,8 @@ protected:
     bool paused = false;
     QQuaternion QuatOrient; // initialise to unit quaternion
     int xCentre, yCentre;
-    float delX =0.0f, delY = 0.0f, delZ = -125.0f;
+    const float delZ0 = -125.0f;
+    float delX =0.0f, delY = 0.0f, delZ = delZ0;
     float pa;
     GLuint Na, Nb, Nind_a, Nind1_a, Nind_b, Nind1_b;
     const double delTheta = 0.1;

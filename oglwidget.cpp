@@ -75,7 +75,7 @@ OGLWidget::~OGLWidget()
 void OGLWidget::initializeGL()
 {
     initializeOpenGLFunctions();
-    buildGears();
+    //buildGears();
 
     // Vertex Shader
     {
@@ -113,6 +113,7 @@ void OGLWidget::initializeGL()
         glDeleteShader(vertexShader);
         glUseProgram(shaderProgram);
     }
+    buildGears();
     // enable depth testing
     glEnable(GL_DEPTH_TEST);
     uni = glGetUniformLocation(shaderProgram, "matrix");
@@ -154,7 +155,6 @@ void  OGLWidget::buildGears(bool redo)
 
 
     if(redo){
-        theta_a = theta_b = 0.0;
         std::cout << "Well we tried!\n";
         //glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
@@ -200,12 +200,9 @@ void OGLWidget::mouseMoveEvent(QMouseEvent *event)
     int x0 = lastPos.x();
     int y0 = -lastPos.y();
 
-
-    QTextStream out(stdout);
-
     // Is shift button being held down
     if(Qt::ShiftModifier == QApplication::keyboardModifiers()){ // translate in x,y plane
-        const float xmin = 2.0 * delZ;
+        const float xmin = 8.0 * delZ;
         const float xmax = -xmin;
         const float ymin = xmin * (float) yCentre / (float) xCentre;
         const float ymax = -ymin;
