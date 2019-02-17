@@ -139,7 +139,7 @@
      <string>Light Position</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -172,7 +172,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -211,7 +211,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -249,7 +249,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -286,7 +286,7 @@
           <number>500</number>
          </property>
          <property name="value">
-          <number>50</number>
+          <number>-50</number>
          </property>
         </widget>
        </item>
@@ -319,7 +319,7 @@
           <number>500</number>
          </property>
          <property name="value">
-          <number>100</number>
+          <number>0</number>
          </property>
         </widget>
        </item>
@@ -357,25 +357,17 @@
      </item>
     </layout>
    </widget>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
    <zorder>myOGLWidget</zorder>
-   <zorder>quitButton</zorder>
-   <zorder>pausePlayButton</zorder>
    <zorder>label</zorder>
-   <zorder>radioButton_20</zorder>
-   <zorder>radioButton_25</zorder>
-   <zorder>radioButton_14</zorder>
    <zorder>label_2</zorder>
    <zorder>label_3</zorder>
-   <zorder>spinBox_Na</zorder>
-   <zorder>spinBox_Nb</zorder>
    <zorder>label_4</zorder>
    <zorder>horizontalScrollBar</zorder>
    <zorder>label_5</zorder>
-   <zorder>spinBox</zorder>
-   <zorder>spinBox_4</zorder>
-   <zorder>horizontalLayoutWidget_2</zorder>
-   <zorder>horizontalLayoutWidget_3</zorder>
-   <zorder>horizontalLayoutWidget_4</zorder>
    <zorder>label_6</zorder>
   </widget>
  </widget>
