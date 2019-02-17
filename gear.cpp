@@ -2,8 +2,6 @@
 // Stephen R Williams, Feb 2019
 // License: GPL V3
 
-
-#include <vector>
 #include <array>
 #include <iostream>
 #include <cmath>
@@ -468,7 +466,7 @@ void gear::NewtonRaphson(unsigned int n, const float r, float &theta, float &x, 
     float rx;
     float del_theta;
 
-    for(unsigned int i=0; i<n; ++i){
+    for(int i=0; i<n; ++i){
         cost = cos(pa + theta);
         sint = sin(pa + theta);
         x = -rbc * sint + rp * (sinpa + theta * cospa) * cost;
@@ -496,7 +494,7 @@ void gear::RotateVerts(float theta)
     const float sinx = sin(theta);
     float x, y;
 
-    for(unsigned int i=0, j; i<nVertices; ++i){
+    for(int i=0, j; i<nVertices; ++i){
         j = i * 6;
         x = verts[j];
         y = verts[j+1];
