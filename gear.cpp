@@ -2,6 +2,8 @@
 // Stephen R Williams, Feb 2019
 // License: GPL V3
 
+
+#include <vector>
 #include <array>
 #include <iostream>
 #include <cmath>
@@ -17,8 +19,9 @@
 static const float pi = 3.1415926535897932f;
 //static const float pa = (20.0f / 180.0f * pi); // pressure angle in radians
 static const float Df = 2.157f; // tooth depth
-static const unsigned int Ninv = 11; // number of involute vertices on one side of tooth
-
+static const unsigned int Ninv = 14; // number of involute vertices on one side of tooth, incuding fillet curve
+static const unsigned int Nfillet = 1; // number of extra points used for tooth root fillet curve
+static const float filletR = 0.2; // radius of tooth root fillet
 
 gear::gear(unsigned int Ni, float pai, float dZ):N(Ni), nVertices(8*(1+Ninv)*Ni+2), nIndices(24*Ninv*Ni),
     n1indices(Ni *(12*Ninv+6)), rp((float) Ni / 2.0f), rbc(rp * cos(pai)), rmaj((float) (Ni+2) / 2.0f),
@@ -34,9 +37,6 @@ gear::gear(unsigned int Ni, float pai, float dZ):N(Ni), nVertices(8*(1+Ninv)*Ni+
     invo_curve_xn.resize(Ninv);
     invo_curve_yn.resize(Ninv);
 
-    std::cout << "N = " << N << ", pa = " << pa * 180.0f / pi;
-    std::cout << ", rp = " << rp << ", rbc = " << rbc << ", rmaj = " << rmaj;
-    std::cout << ", rmin " << rmin << std::endl;
     sectorVerts();
     for(unsigned int i=0; i<N; ++i) sectorV(i);
     sectorIndicies();
@@ -45,7 +45,6 @@ gear::gear(unsigned int Ni, float pai, float dZ):N(Ni), nVertices(8*(1+Ninv)*Ni+
 
 gear::~gear()
 {
-    std::cout << "Bye from N = " << N << std::endl;
 }
 
 // make a preliminary (2D in xy plane only) template
@@ -80,7 +79,7 @@ void gear::sectorVerts()
         vertxn[j] = cosx * xn - sinx * yn;
         vertyn[j] = sinx * xn + cosx * yn;
     }
-    // 2 centre verticies
+    // 2 centre verticies, common to all teeth
     unsigned int cnt = 0;
     vert_it[cnt++] = 0.0f;
     vert_it[cnt++] = 0.0f;
@@ -118,7 +117,7 @@ void gear::sectorV(unsigned int n)
     vr[cnt++] = cosx * vertx[N1] - sinx * verty[N1];
     vr[cnt++] = sinx * vertx[N1] + cosx * verty[N1];
     vr[cnt++] = delZ;
-    vr[cnt++] = vr[0] / rmaj; // normal vector
+    vr[cnt++] = vr[0] / rmaj; // normal vector,
     vr[cnt++] = vr[1] / rmaj;
     vr[cnt++] = 0.0f;
     // front second
@@ -399,6 +398,8 @@ void gear::involute_pure()
     }
 }
 
+// Nfillet, filletR, Ninv
+
 void gear::involute_part()
 {
     float x, y, r;
@@ -407,7 +408,8 @@ void gear::involute_part()
     float cost, sint;
     unsigned int n1 = Ninv / 2;
 
-    x = -rbc * sinpa + rp * sinpa * cospa; // place on pitch circle
+    // place on pitch circle
+    x = -rbc * sinpa + rp * sinpa * cospa;
     y = rbc * cospa + rp * sinpa * sinpa;
     invo_curve_x[n1] = x;
     invo_curve_y[n1] = y;
@@ -416,7 +418,9 @@ void gear::involute_part()
     norm = 1.0f / sqrtf(xd * xd + yd * yd);
     invo_curve_xn[n1] = yd * norm;
     invo_curve_yn[n1] = -xd * norm;
-    theta = -sinpa / cospa; // put on base circle
+
+    // point on base circle
+    theta = -sinpa / cospa;
     cost = cos(pa + theta);
     sint = sin(pa + theta);
     x = -rbc * sint + rp * (sinpa + theta * cospa) * cost;
@@ -429,7 +433,8 @@ void gear::involute_part()
     norm = 1.0f / sqrtf(xd * xd + yd * yd);
     invo_curve_xn[0] = invo_curve_xn[1] = yd * norm;
     invo_curve_yn[0] = invo_curve_yn[1] = -xd * norm;
-    // put on minor diameter
+
+    // point on minor diameter
     invo_curve_x[0] = x * rmin / r;
     invo_curve_y[0] = y * rmin / r;
     theta *= 0.5; // half way between pitch circle and base circle
@@ -446,15 +451,6 @@ void gear::involute_part()
         invo_curve_xn[i] = yd * norm;
         invo_curve_yn[i] = -xd * norm;
     }
-    /*for(int i=0; i<Ninv; ++i){
-        x = invo_curve_x[i];
-        y = invo_curve_y[i];
-        r = sqrtf(x * x + y * y);
-        std::cout << "x = " << x << ", y = " << y << ", r = " << r;
-        std::cout << ", xn = " << invo_curve_xn[i] << ", yn = " << invo_curve_yn[i];
-        std::cout << ", angle = " << atan(invo_curve_yn[i] / invo_curve_xn[i]) * 180.0f / pi;
-        std::cout << std::endl;
-    }*/
 }
 
 // find coords to bring involute curve to distance r from centre
@@ -466,7 +462,7 @@ void gear::NewtonRaphson(unsigned int n, const float r, float &theta, float &x, 
     float rx;
     float del_theta;
 
-    for(int i=0; i<n; ++i){
+    for(unsigned int i=0; i<n; ++i){
         cost = cos(pa + theta);
         sint = sin(pa + theta);
         x = -rbc * sint + rp * (sinpa + theta * cospa) * cost;
@@ -494,7 +490,7 @@ void gear::RotateVerts(float theta)
     const float sinx = sin(theta);
     float x, y;
 
-    for(int i=0, j; i<nVertices; ++i){
+    for(unsigned int i=0, j; i<nVertices; ++i){
         j = i * 6;
         x = verts[j];
         y = verts[j+1];

@@ -24,6 +24,7 @@ public:
 
 private slots:
     void on_quitButton_clicked();
+    void keyPressEvent(QKeyEvent *event);
     void on_pausePlayButton_clicked();
     void drawOpenGL();
 

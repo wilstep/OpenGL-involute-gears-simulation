@@ -4,7 +4,6 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) //, ui(new Ui::MainWindow)
@@ -39,6 +38,11 @@ void MainWindow::on_quitButton_clicked()
     close();
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Escape) close();
+}
+
 void MainWindow::on_resetButton_clicked()
 {
     ui->myOGLWidget->reset();
@@ -56,7 +60,6 @@ void MainWindow::on_pausePlayButton_clicked()
         ui->spinBox_Nb->setEnabled(false);
         if(rebuildGears){
             ui->myOGLWidget->rebuild();
-            std::cout << "Rebuilding!\n";
         }
         rebuildGears = false;
     }
@@ -77,7 +80,6 @@ void MainWindow::on_radioButton_14_clicked()
     pa = 14.5f * M_PI / 180.0f;
     ui->myOGLWidget->setPa(pa);
     rebuildGears = true;
-    std::cout << "Pressure angle 14.5 degrees\n";
 }
 
 void MainWindow::on_radioButton_20_clicked()
@@ -85,7 +87,6 @@ void MainWindow::on_radioButton_20_clicked()
     pa = 20.0f * M_PI / 180.0f;
     ui->myOGLWidget->setPa(pa);
     rebuildGears = true;
-    std::cout << "Pressure angle 20 degrees\n";
 }
 
 void MainWindow::on_radioButton_25_clicked()
@@ -93,7 +94,6 @@ void MainWindow::on_radioButton_25_clicked()
     pa = 25.0f * M_PI / 180.0f;
     ui->myOGLWidget->setPa(pa);
     rebuildGears = true;
-    std::cout << "Pressure angle 25 degrees\n";
 }
 
 void MainWindow::on_spinBox_Na_editingFinished()
@@ -104,7 +104,6 @@ void MainWindow::on_spinBox_Na_editingFinished()
         ui->myOGLWidget->setNa(Na);
         rebuildGears = true;
         ui->myOGLWidget->reZeroThetas();
-        std::cout << "Na = " << Na << std::endl;
     }
 }
 
@@ -116,7 +115,6 @@ void MainWindow::on_spinBox_Nb_editingFinished()
         ui->myOGLWidget->setNb(Nb);
         rebuildGears = true;
         ui->myOGLWidget->reZeroThetas();
-        std::cout << "Nb = " << Nb << std::endl;
     }
 }
 

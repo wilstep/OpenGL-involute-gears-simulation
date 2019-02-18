@@ -15,82 +15,9 @@
 #include <vector>
 #include <string>
 #include<QApplication>
-#include<cstdlib>
+//#include<cstdlib>
 
-static const char *vertexShaderSourceNew = R"glsl(
-    #version 330
-    layout (location = 0) in vec3 aPos;
-    layout (location = 1) in vec3 aNormal;
-    out vec3 Normal, FragPos;
-
-    uniform mat4 matrix;
-    uniform mat4 perspective;
-
-    void main()
-    {
-       gl_Position = perspective * matrix * vec4(aPos, 1.0);
-       Normal = vec3(matrix * vec4(aNormal, 0.0));
-    }
-)glsl";
-
-static const char *fragmentShaderSourceNew = R"glsl(
-    #version 330
-    in vec3 Normal;
-    in vec3 FragPos;
-    out vec4 outColor;
-
-    uniform vec3 triangleColor;
-    uniform vec3 lightPos;
-
-    void main()
-    {
-        vec3 lightColor = vec3(0.9, 0.9, 0.9);
-        float ambientStrength = 0.2;
-
-        vec3 ambient = ambientStrength * lightColor;
-        vec3 lightDir = normalize(lightPos - FragPos);
-        vec3 norm = Normal;
-        float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = diff * lightColor;
-        vec3 result = (ambient + diffuse) * triangleColor;
-        outColor = vec4(result, 1.0);
-    }
-)glsl";
-
-static const char *vertexShaderSource = R"glsl(
-    #version 130
-    in vec3 aPos;
-    in vec3 aNormal;
-    out vec3 Normal, FragPos;
-    uniform mat4 matrix;
-    uniform mat4 perspective;
-    void main()
-    {
-       gl_Position = perspective * matrix * vec4(aPos, 1.0);
-       Normal = vec3(matrix * vec4(aNormal, 0.0));
-    }
-)glsl";
-
-static const char *fragmentShaderSource = R"glsl(
-    #version 130
-    in vec3 Normal;
-    in vec3 FragPos;
-    out vec4 outColor;
-    uniform vec3 triangleColor;
-    uniform vec3 lightPos;
-    void main()
-    {
-        vec3 lightColor = vec3(0.9, 0.9, 0.9);
-        float ambientStrength = 0.2;
-        vec3 ambient = ambientStrength * lightColor;
-        vec3 lightDir = normalize(lightPos - FragPos);
-        vec3 norm = Normal;
-        float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = diff * lightColor;
-        vec3 result = (ambient + diffuse) * triangleColor;
-        outColor = vec4(result, 1.0);
-    }
-)glsl";
+#include "myshaders.h"
 
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -112,7 +39,9 @@ void OGLWidget::initializeGL()
     bool newVer = false;
 
     initializeOpenGLFunctions();
-    OGL_ver = (float) atof((const char*) glGetString(GL_VERSION));
+    //OGL_ver = (float) atof((const char*) glGetString(GL_VERSION));
+    OGL_ver = std::stof(std::string((const char*) glGetString(GL_VERSION)));
+    std::cout << "OGL_ver = " << OGL_ver << std::endl;
     if(OGL_ver >= 3.3f) newVer = true;
     // Vertex Shader
     {
@@ -173,8 +102,8 @@ void OGLWidget::initializeGL()
 
 void  OGLWidget::buildGears(bool redo)
 {
-    if(redo) std::cout << "not my first time: Woot!\n";
-    auto myGa = std::make_unique<gear>(Na, pa, 4.001f);
+    // initialise gear objects, which provide vertices and indices
+    auto myGa = std::make_unique<gear>(Na, pa, 4.001f); // gear slightly thicker so it shows above any overlap
     auto myGb = std::make_unique<gear>(Nb, pa, 4.0f);
 
     Nind_a = myGa -> GetNInds();
@@ -187,7 +116,6 @@ void  OGLWidget::buildGears(bool redo)
     // vertex data
     std::vector<GLfloat> vertices, vbuff;
     vertices = myGa -> GetVerts();
-    std::cout << "Na = " << Na << ", Nb = " << Nb << ", Nverts = " << vertices.size() << std::endl;
     vbuff = myGb -> GetVerts();
     vertices.insert(vertices.end(), vbuff.begin(), vbuff.end());
     // index data
@@ -246,7 +174,7 @@ void OGLWidget::mouseMoveEvent(QMouseEvent *event)
 
     // Is shift button being held down
     if(Qt::ShiftModifier == QApplication::keyboardModifiers()){ // translate in x,y plane
-        const float xmin = 8.0 * delZ;
+        const float xmin = 10.0 * delZ;
         const float xmax = -xmin;
         const float ymin = xmin * (float) yCentre / (float) xCentre;
         const float ymax = -ymin;
@@ -266,7 +194,7 @@ void OGLWidget::mouseMoveEvent(QMouseEvent *event)
         else if(event->buttons() & Qt::RightButton){ // zoom in/out
             float zt;
             zt = delZ - 0.001 * delZ * (float) (y1 - y0);
-            if(zt < -1.0f && zt > -180.f) delZ = zt;
+            if(zt < -5.0f && zt > -180.f) delZ = zt;
         }
     }
     else if(event->buttons() & Qt::LeftButton){ // roll, i.e. rotate around vector in x, y plane
@@ -321,7 +249,7 @@ void OGLWidget::paintGL()
 
     QMatrix4x4 matrix_a;
     //matrix_a.perspective(45.0f, 4.0f/3.0f, 0.1f, 280.0f);
-    matrix_a.translate(delX, delY, delZ);
+    matrix_a.translate(delX, delY, delZ + 15.0);
     QMatrix4x4 matrix_b(QuatOrient.toRotationMatrix()); // borrow matrix_b as a buffer variable
     matrix_a = matrix_a * matrix_b;
     matrix_b = matrix_a; // store in matrix_b for later use
@@ -344,5 +272,4 @@ void OGLWidget::paintGL()
     glUniform3f(uniColor, 0.25f, 0.25f, 0.25f); // grey
     glDrawElements(GL_TRIANGLES, Nind_b - Nind1_b, GL_UNSIGNED_INT, (void*)((Nind_a + Nind1_b) * sizeof(GLuint)));
 }
-
 

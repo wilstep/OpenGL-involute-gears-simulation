@@ -20,6 +20,13 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     oglwidget.h \
-    gear.h
+    gear.h \
+    myshaders.h
 
 FORMS    += mainwindow.ui
+
+DISTFILES += \
+    gears.png
+
+RESOURCES += \
+    resource.qrc
