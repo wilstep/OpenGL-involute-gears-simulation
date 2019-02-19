@@ -25,10 +25,10 @@ public:
     void setNb(GLuint x) { Nb = x; }
     void rebuild() { rebuild_flg = true; }
     void setSpeed(float x){ speed = x; }
-    void setLightX(float x){ lightX = x; }
-    void setLightY(float y){ lightY = y; }
-    void setLightZ(float z){ lightZ = z; }
-    void reset() { delX = delY = 0.0f; delZ = delZ0; QuatOrient = QQuaternion(); }
+    void setLightX(float x){ lightX = x; update(); }
+    void setLightY(float y){ lightY = y; update(); }
+    void setLightZ(float z){ lightZ = z; update(); }
+    void reset() { delX = delY = 0.0f; delZ = delZ0; QuatOrient = QQuaternion(); update(); }
     void reZeroThetas() { theta_a = theta_b = 0.0; }
 protected:
     void initializeGL();
@@ -40,7 +40,7 @@ protected:
     int rotate;
     GLuint shaderProgram;
     GLuint vao, vbo, ebo;
-    GLint uni, uniColor, uniPerspective, uniLightPos;
+    GLint uni, uniRot, uniColor, uniPerspective, uniLightPos;
     QPoint lastPos;
     bool paused = false;
     QQuaternion QuatOrient; // initialise to unit quaternion

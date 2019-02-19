@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Gear Simulator</string>
+   <string>Involute Gear Simulator</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="OGLWidget" name="myOGLWidget">
@@ -139,7 +139,7 @@
      <string>Light Position</string>
     </property>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="layoutWidget1">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -172,7 +172,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="layoutWidget2">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -211,7 +211,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="layoutWidget3">
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -249,7 +249,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="layoutWidget4">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -286,7 +286,7 @@
           <number>500</number>
          </property>
          <property name="value">
-          <number>-50</number>
+          <number>0</number>
          </property>
         </widget>
        </item>
@@ -357,10 +357,10 @@
      </item>
     </layout>
    </widget>
-   <zorder>layoutWidget</zorder>
-   <zorder>layoutWidget</zorder>
-   <zorder>layoutWidget</zorder>
-   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget4</zorder>
+   <zorder>layoutWidget3</zorder>
+   <zorder>layoutWidget2</zorder>
+   <zorder>layoutWidget1</zorder>
    <zorder>myOGLWidget</zorder>
    <zorder>label</zorder>
    <zorder>label_2</zorder>

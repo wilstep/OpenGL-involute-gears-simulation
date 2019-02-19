@@ -10,10 +10,13 @@ static const char *vertexShaderSourceNew = R"glsl(
     out vec3 Normal, FragPos;
     uniform mat4 matrix;
     uniform mat4 perspective;
+    uniform mat4 rot;
+
     void main()
     {
        gl_Position = perspective * matrix * vec4(aPos, 1.0);
-       Normal = vec3(matrix * vec4(aNormal, 0.0));
+       Normal = vec3(rot * vec4(aNormal, 0.0));
+       FragPos = vec3(matrix * vec4(aPos, 1.0));
     }
 )glsl";
 
@@ -45,10 +48,13 @@ static const char *vertexShaderSource = R"glsl(
     out vec3 Normal, FragPos;
     uniform mat4 matrix;
     uniform mat4 perspective;
+    uniform mat4 rot;
+
     void main()
     {
        gl_Position = perspective * matrix * vec4(aPos, 1.0);
-       Normal = vec3(matrix * vec4(aNormal, 0.0));
+       Normal = vec3(rot * vec4(aNormal, 0.0));
+       FragPos = vec3(matrix * vec4(aPos, 1.0));
     }
 )glsl";
 

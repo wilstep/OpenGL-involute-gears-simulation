@@ -91,6 +91,7 @@ void OGLWidget::initializeGL()
     // enable depth testing
     glEnable(GL_DEPTH_TEST);
     uni = glGetUniformLocation(shaderProgram, "matrix");
+    uniRot = glGetUniformLocation(shaderProgram, "rot");
     uniPerspective = glGetUniformLocation(shaderProgram, "perspective");
     uniLightPos = glGetUniformLocation(shaderProgram, "lightPos");
     uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
@@ -247,26 +248,33 @@ void OGLWidget::paintGL()
     glViewport(0, 0, width() * retinaScale, height() * retinaScale);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    QMatrix4x4 matrix_a;
-    //matrix_a.perspective(45.0f, 4.0f/3.0f, 0.1f, 280.0f);
-    matrix_a.translate(delX, delY, delZ + 15.0);
-    QMatrix4x4 matrix_b(QuatOrient.toRotationMatrix()); // borrow matrix_b as a buffer variable
-    matrix_a = matrix_a * matrix_b;
-    matrix_b = matrix_a; // store in matrix_b for later use
-    matrix_a.translate(delXa, 0.0f, 0.0f);
-    matrix_a.rotate(theta_a, 0.0f, 0.0f, 1.0f);
-    matrix_b.translate(delXb, 0.0f, 0.0f);
-    matrix_b.rotate(theta_b, 0.0f, 0.0f, 1.0f);
+    QMatrix4x4 matrixA, matrixB;
+    QMatrix4x4 matRotA, matRotB;
+    QMatrix4x4 matRot(QuatOrient.toRotationMatrix());
+
+    matrixA.translate(delX, delY, delZ + 15.0);
+    matrixA = matrixA * matRot;
+    matrixB = matrixA; // store in matrix_b for later use
+    matrixA.translate(delXa, 0.0f, 0.0f);
+    matrixA.rotate(theta_a, 0.0f, 0.0f, 1.0f);
+    matrixB.translate(delXb, 0.0f, 0.0f);
+    matrixB.rotate(theta_b, 0.0f, 0.0f, 1.0f);
+    matRotA = matRot;
+    matRotA.rotate(theta_a, 0.0f, 0.0f, 1.0f);
+    matRotB = matRot;
+    matRotB.rotate(theta_b, 0.0f, 0.0f, 1.0f);
 
     // draw first gear
-    glUniformMatrix4fv(uni, 1, GL_FALSE, matrix_a.data()); // transpose is set to true/false
+    glUniformMatrix4fv(uni, 1, GL_FALSE, matrixA.data()); // transpose is set to true/false
+    glUniformMatrix4fv(uniRot, 1, GL_FALSE, matRotA.data());
     glUniform3f(uniColor, 0.1f, 0.2f, 0.5f); // set color
     glDrawElements(GL_TRIANGLES, Nind1_a, GL_UNSIGNED_INT, (void*)(0 * sizeof(GLuint)));
     glUniform3f(uniColor, 0.184314, 0.309804, 0.184314); // dark green
     glDrawElements(GL_TRIANGLES, Nind_a - Nind1_a, GL_UNSIGNED_INT, (void*)(Nind1_a * sizeof(GLuint)));
 
     // draw second gear
-    glUniformMatrix4fv(uni, 1, GL_FALSE, matrix_b.data()); // transpose is set to true/false
+    glUniformMatrix4fv(uni, 1, GL_FALSE, matrixB.data()); // transpose is set to true/false
+    glUniformMatrix4fv(uniRot, 1, GL_FALSE, matRotB.data());
     glUniform3f(uniColor, 0.1f, 0.1f, 0.4f); // set color
     glDrawElements(GL_TRIANGLES, Nind1_b, GL_UNSIGNED_INT, (void*)(Nind_a * sizeof(GLuint)));
     glUniform3f(uniColor, 0.25f, 0.25f, 0.25f); // grey

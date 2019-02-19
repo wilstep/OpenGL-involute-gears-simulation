@@ -22,9 +22,11 @@ private:
     void sectorV(unsigned int n);
     void sectorI(unsigned int n);
     void involute();
+    void sectorFillet();
     void involute_pure();
     void involute_part();
     void NewtonRaphson(unsigned int n, const float r, float &theta, float &x, float &y);
+    float tangent(float theta);
     const unsigned int N, nVertices, nIndices, n1indices;
     // pitch radius, base circle radius, major radius, minor radius
     const float rp, rbc, rmaj, rmin, delZ;
