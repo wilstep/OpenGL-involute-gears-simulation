@@ -6,9 +6,9 @@
 
 # for linux
 unix: QMAKE_CXXFLAGS += -std=c++17
-
 # for windows
 win32: CONFIG += c++17
+
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
