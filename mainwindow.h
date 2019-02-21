@@ -34,14 +34,12 @@ private slots:
     void on_spinBox_Na_editingFinished();
     void on_spinBox_Nb_editingFinished();
     void on_horizontalScrollBar_valueChanged(int value);
-
     void on_lightPosX_editingFinished();
-
     void on_lightPosY_editingFinished();
-
     void on_lightPosZ_editingFinished();
-
     void on_resetButton_clicked();
+    void on_spinBox_Na_valueChanged(int);
+    void on_spinBox_Nb_valueChanged(int);
 
 private:
     Ui::MainWindow *ui;

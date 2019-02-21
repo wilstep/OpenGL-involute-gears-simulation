@@ -24,7 +24,7 @@ public:
     void setNa(GLuint x) { Na = x; }
     void setNb(GLuint x) { Nb = x; }
     void rebuild() { rebuild_flg = true; }
-    void setSpeed(float x){ speed = x; }
+    void setSpeed(float x){ speed = x * 12.0f / (float) Na; }
     void setLightX(float x){ lightX = x; update(); }
     void setLightY(float y){ lightY = y; update(); }
     void setLightZ(float z){ lightZ = z; update(); }
@@ -40,10 +40,10 @@ protected:
     int rotate;
     GLuint shaderProgram;
     GLuint vao, vbo, ebo;
-    GLint uni, uniRot, uniColor, uniPerspective, uniLightPos;
+    GLint uniMat, uniRot, uniColor, uniPerspective, uniLightPos;
     QPoint lastPos;
     bool paused = false;
-    QQuaternion QuatOrient; // initialise to unit quaternion
+    QQuaternion QuatOrient; // initialised to unit quaternion, stores the global orientation
     int xCentre, yCentre;
     const float delZ0 = -125.0f;
     float delX =0.0f, delY = 0.0f, delZ = delZ0;

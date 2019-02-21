@@ -39,8 +39,8 @@ void OGLWidget::initializeGL()
     bool newVer = false;
 
     initializeOpenGLFunctions();
-    //OGL_ver = (float) atof((const char*) glGetString(GL_VERSION));
-    OGL_ver = std::stof(std::string((const char*) glGetString(GL_VERSION)));
+    //OGL_ver = std::stof(std::string((const char*) glGetString(GL_VERSION)));
+    OGL_ver = std::stof(std::string((const char*) glGetString(GL_SHADING_LANGUAGE_VERSION)));
     std::cout << "OGL_ver = " << OGL_ver << std::endl;
     if(OGL_ver >= 3.3f) newVer = true;
     // Vertex Shader
@@ -90,7 +90,7 @@ void OGLWidget::initializeGL()
     buildGears();
     // enable depth testing
     glEnable(GL_DEPTH_TEST);
-    uni = glGetUniformLocation(shaderProgram, "matrix");
+    uniMat = glGetUniformLocation(shaderProgram, "matrix");
     uniRot = glGetUniformLocation(shaderProgram, "rot");
     uniPerspective = glGetUniformLocation(shaderProgram, "perspective");
     uniLightPos = glGetUniformLocation(shaderProgram, "lightPos");
@@ -104,8 +104,8 @@ void OGLWidget::initializeGL()
 void  OGLWidget::buildGears(bool redo)
 {
     // initialise gear objects, which provide vertices and indices
-    auto myGa = std::make_unique<gear>(Na, pa, 4.001f); // gear slightly thicker so it shows above any overlap
-    auto myGb = std::make_unique<gear>(Nb, pa, 4.0f);
+    auto myGa = std::make_unique<gear>(Na, pa, 5.0f); // gear slightly thicker so it shows above any overlap
+    auto myGb = std::make_unique<gear>(Nb, pa, 5.0001f);
 
     Nind_a = myGa -> GetNInds();
     Nind1_a = myGa -> GetN1Inds();
@@ -198,6 +198,7 @@ void OGLWidget::mouseMoveEvent(QMouseEvent *event)
             if(zt < -5.0f && zt > -180.f) delZ = zt;
         }
     }
+    // Global orientation is stored in the Quaternion OGLWidget::QuatOrient
     else if(event->buttons() & Qt::LeftButton){ // roll, i.e. rotate around vector in x, y plane
         QVector3D rv((float) (y0-y1), (float) (x1-x0), 0.0f); // orthogonal vector in plane
         float length = 0.0025 * rv.length(); // magnitude for rotation
@@ -209,13 +210,19 @@ void OGLWidget::mouseMoveEvent(QMouseEvent *event)
         // xCentre, yCentre
         QVector3D rv0((float)(x0 - xCentre), (float) (y0 + yCentre), 0.0f);
         QVector3D rv1((float)(x1 - xCentre), (float) (y1 + yCentre), 0.0f);
-        rv0.normalize();
-        rv1.normalize();
-        QVector3D rcp = QVector3D::crossProduct(rv0, rv1);
-        float theta = 0.5 * asin(rcp.length()); // half angle for quaternion
-        QQuaternion rot(cos(theta), sin(theta) * rcp.normalized()); // rotation quaternion
-        rot *= QuatOrient;
-        QuatOrient = rot;
+        float rad = sqrt(rv0.length() * rv1.length());
+        if(rad > 10.0f){
+            rv0.normalize();
+            rv1.normalize();
+            QVector3D rcp = QVector3D::crossProduct(rv0, rv1);
+            float theta;
+            // limit the speed near the centre of rotation
+            if(rad<120.0f) theta = rad * asin(rcp.length()) / 240.0f; // half angle for quaternion
+            else theta = 0.5 * asin(rcp.length()); // half angle for quaternion
+            QQuaternion rot(cos(theta), sin(theta) * rcp.normalized()); // rotation quaternion
+            rot *= QuatOrient;
+            QuatOrient = rot;
+        }
     }
     lastPos = event->pos();
     if(paused) update();
@@ -265,7 +272,7 @@ void OGLWidget::paintGL()
     matRotB.rotate(theta_b, 0.0f, 0.0f, 1.0f);
 
     // draw first gear
-    glUniformMatrix4fv(uni, 1, GL_FALSE, matrixA.data()); // transpose is set to true/false
+    glUniformMatrix4fv(uniMat, 1, GL_FALSE, matrixA.data()); // transpose is set to true/false
     glUniformMatrix4fv(uniRot, 1, GL_FALSE, matRotA.data());
     glUniform3f(uniColor, 0.1f, 0.2f, 0.5f); // set color
     glDrawElements(GL_TRIANGLES, Nind1_a, GL_UNSIGNED_INT, (void*)(0 * sizeof(GLuint)));
@@ -273,7 +280,7 @@ void OGLWidget::paintGL()
     glDrawElements(GL_TRIANGLES, Nind_a - Nind1_a, GL_UNSIGNED_INT, (void*)(Nind1_a * sizeof(GLuint)));
 
     // draw second gear
-    glUniformMatrix4fv(uni, 1, GL_FALSE, matrixB.data()); // transpose is set to true/false
+    glUniformMatrix4fv(uniMat, 1, GL_FALSE, matrixB.data()); // transpose is set to true/false
     glUniformMatrix4fv(uniRot, 1, GL_FALSE, matRotB.data());
     glUniform3f(uniColor, 0.1f, 0.1f, 0.4f); // set color
     glDrawElements(GL_TRIANGLES, Nind1_b, GL_UNSIGNED_INT, (void*)(Nind_a * sizeof(GLuint)));

@@ -50,7 +50,13 @@ void MainWindow::on_resetButton_clicked()
 
 void MainWindow::on_pausePlayButton_clicked()
 {
-    if(pause){ // activate simulation
+    if(pause && rebuildGears){
+        ui->pausePlayButton->setText("Play");
+        ui->myOGLWidget->rebuild();
+        ui->myOGLWidget->update();
+        rebuildGears = false;
+    }
+    else if(pause){ // activate simulation
         ui->pausePlayButton->setText("Pause");
         ui->myOGLWidget->setPaused(false);
         ui->radioButton_14->setEnabled(false);
@@ -58,10 +64,7 @@ void MainWindow::on_pausePlayButton_clicked()
         ui->radioButton_25->setEnabled(false);
         ui->spinBox_Na->setEnabled(false);
         ui->spinBox_Nb->setEnabled(false);
-        if(rebuildGears){
-            ui->myOGLWidget->rebuild();
-        }
-        rebuildGears = false;
+        pause = !pause;
     }
     else{ // pause simulation
         ui->pausePlayButton->setText("Play");
@@ -71,8 +74,8 @@ void MainWindow::on_pausePlayButton_clicked()
         ui->radioButton_25->setEnabled(true);
         ui->spinBox_Na->setEnabled(true);
         ui->spinBox_Nb->setEnabled(true);
+        pause = !pause;
     }
-    pause = !pause;
 }
 
 void MainWindow::on_radioButton_14_clicked()
@@ -80,6 +83,7 @@ void MainWindow::on_radioButton_14_clicked()
     pa = 14.5f * M_PI / 180.0f;
     ui->myOGLWidget->setPa(pa);
     rebuildGears = true;
+    ui->pausePlayButton->setText("Rebuild");
 }
 
 void MainWindow::on_radioButton_20_clicked()
@@ -87,6 +91,7 @@ void MainWindow::on_radioButton_20_clicked()
     pa = 20.0f * M_PI / 180.0f;
     ui->myOGLWidget->setPa(pa);
     rebuildGears = true;
+    ui->pausePlayButton->setText("Rebuild");
 }
 
 void MainWindow::on_radioButton_25_clicked()
@@ -94,6 +99,7 @@ void MainWindow::on_radioButton_25_clicked()
     pa = 25.0f * M_PI / 180.0f;
     ui->myOGLWidget->setPa(pa);
     rebuildGears = true;
+    ui->pausePlayButton->setText("Rebuild");
 }
 
 void MainWindow::on_spinBox_Na_editingFinished()
@@ -104,6 +110,7 @@ void MainWindow::on_spinBox_Na_editingFinished()
         ui->myOGLWidget->setNa(Na);
         rebuildGears = true;
         ui->myOGLWidget->reZeroThetas();
+        ui->pausePlayButton->setText("Rebuild");
     }
 }
 
@@ -115,7 +122,18 @@ void MainWindow::on_spinBox_Nb_editingFinished()
         ui->myOGLWidget->setNb(Nb);
         rebuildGears = true;
         ui->myOGLWidget->reZeroThetas();
+        ui->pausePlayButton->setText("Rebuild");
     }
+}
+
+void MainWindow::on_spinBox_Na_valueChanged(int)
+{
+    ui->pausePlayButton->setText("Rebuild");
+}
+
+void MainWindow::on_spinBox_Nb_valueChanged(int)
+{
+    ui->pausePlayButton->setText("Rebuild");
 }
 
 void MainWindow::drawOpenGL()
