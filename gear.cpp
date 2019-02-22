@@ -357,6 +357,9 @@ void gear::sectorI(unsigned int n)
     }
 }
 
+
+// callculate involute with fillet radius for case where
+// fillet is entirely inside base circle
 void gear::sectorFillet()
 {
     float x0, y0, dtheta1, dtheta2;
@@ -364,7 +367,7 @@ void gear::sectorFillet()
     {
         float x, y, theta;
 
-        theta = - rp * sinpa / rbc; // angle where involute is on base circle
+        theta = - rp * sinpa / rbc; // angle where involute crosses base circle
         x0 = filletR;
         y0 = rbc; // put fillet tangent to y sector line at base circle radius
         dtheta1 = pa + theta; // angle to rotate onto tooth
@@ -373,7 +376,8 @@ void gear::sectorFillet()
         x = x0 * cos(dtheta1) - y0 * sin(dtheta1);
         y = x0 * sin(dtheta1) + y0 * cos(dtheta1); // now have height of fillet radius
         if(y < rmin + filletR){ // fillet's on the involute
-            involute_part();
+            involute_fillet();
+            //involute_part();
             return;
         }
 
@@ -385,10 +389,10 @@ void gear::sectorFillet()
         dtheta2 = -dtheta2;
         x = x0 * cos(dtheta2) - y0 * sin(dtheta2);
         y = x0 * sin(dtheta2) + y0 * cos(dtheta2);
-        x0 = x;
+        x0 = x; // x0, y0 are centre coordinate of fillet
         y0 = y;
-        dtheta1 = pa + theta; // angle where involute is on base circle
-        dtheta2 = -dtheta2; // rotate gear so middle of gullet is on y axis
+        dtheta1 = pa + theta; // angle from y axis where involute crosses base circle
+        dtheta2 = -dtheta2;   // angle to rotate gear so middle of gullet is on y axis
     }
 
     float x, y, r;
@@ -396,17 +400,17 @@ void gear::sectorFillet()
     float theta, norm;
     float cost, sint;
 
-    // point on base circle
-    theta = -sinpa / cospa;
+    // point on base circle, largest diameter of sector
+    //theta = -sinpa / cospa; // = -tan(pa)
+    theta = dtheta1 - pa;
     cost = cos(pa + theta);
     sint = sin(pa + theta);
     x = -rbc * sint + rp * (sinpa + theta * cospa) * cost;
     y = rbc * cost + rp * (sinpa + theta * cospa) * sint;
-    // point on minor diameter
     invo_curve_x[Nfillet] = x;
     invo_curve_y[Nfillet] = y;
-    xd = y; // on base circle, norm is tangent to circle for straight line
-    yd = -x;  // from this point, is a corner
+    xd = y; // start of sector, norm is tangent to base circle
+    yd = -x;
     norm = 1.0f / sqrtf(xd * xd + yd * yd);
     invo_curve_xn[Nfillet] = xd * norm;
     invo_curve_yn[Nfillet] = yd * norm;
@@ -414,8 +418,8 @@ void gear::sectorFillet()
     // fillets
     float theta1, theta2;
     theta1 = 1.5f * pi - dtheta2; // blend into gullet
-    theta2 = pi + dtheta1; // blend into tooth
-    const float delTheta = (theta2 - theta1) / (float) Nfillet;
+    theta2 = pi + dtheta1; // blend into sector
+    const float delTheta = (theta2 - theta1) / (float) (Nfillet - 1);
     theta = theta1;
     for(unsigned int i=0; i<Nfillet; ++i){
         cost = cos(theta);
@@ -445,114 +449,88 @@ void gear::sectorFillet()
     }
 }
 
-// method computes the verticies for the involute and
+
+// callculate involute with fillet radius for case where
+// fillet is tangent to involute
+void gear::involute_fillet()
+{
+    float x, y, dx, dy;
+    float theta, beta;
+    float hPrime;
+    const float gamma = 2.0f * gap * pi / (float) N;
+    const float sing = sin(gamma), cosg = cos(gamma);
+
+    theta = 0.0f;
+    float cost, sint;
+    float xf, yf, dh;
+    for(int i=0; i<6; ++i){
+        cost = cos(pa + theta);
+        sint = sin(pa + theta);
+        x = -rbc * sint + rp * (sinpa + theta * cospa) * cost;
+        y = rbc * cost + rp * (sinpa + theta * cospa) * sint;
+        // derivatives wrt theta
+        dx = -y + rp * cospa * cost;
+        dy = x + rp * cospa * sint;
+        beta = -atan(dx / dy);
+        xf = x + filletR * cos(beta);
+        yf = y + filletR * sin(beta);
+        hPrime = sing * xf + cosg * yf;
+        dh = hPrime - rmin - filletR;
+
+        // now calculate derivative of gradient
+        float ddx, ddy, gdd, dhPrime;
+        ddx = -dy - rp * cospa * sint;
+        ddy = dx + rp * cospa * cost;
+        // gdd is d/d_theta (dx / dy)
+        gdd = ddx / dy - dx * ddy / (dy * dy);
+        float dxdy = dx / dy;
+        float dBeta_dTheta = -1.0f / (1.0f + dxdy * dxdy) * gdd;
+        dhPrime = sing * (dx - filletR * sin(beta) * dBeta_dTheta);
+        dhPrime += cosg * (dy + filletR * cos(beta) * dBeta_dTheta);
+        theta -= dh / dhPrime;
+    }
+
+    // fillets
+    float r = sqrt(x * x + y * y); // currently smallest diameter of involute
+    float x0 = x + filletR * cos(beta);
+    float y0 = y + filletR * sin(beta);
+    float theta1 = 1.5f * pi - gap * pi / (float) N; // blend into gullet
+    float theta2 = pi + beta; // blend into tooth
+    const float delTheta = (theta2 - theta1) / (float) (Nfillet - 1);
+    theta = theta1;
+    float norm;
+    for(unsigned int i=0; i<Nfillet; ++i){
+        cost = cos(theta);
+        sint = sin(theta);
+        x = x0 + filletR * cost;
+        y = y0 + filletR * sint;
+        invo_curve_x[i] = x;
+        invo_curve_y[i] = y;
+        norm = 1.0f / sqrtf(cost * cost + sint * sint);
+        invo_curve_xn[i] = -cost * norm;
+        invo_curve_yn[i] = -sint * norm;
+        theta += delTheta;
+    }
+
+    float dr = (rmaj - r) / (float) (Ninv - Nfillet);
+    for(unsigned int i=Nfillet; i<Ninv; ++i){
+        r += dr;
+        NewtonRaphson(6, r, theta, x, y);
+        invo_curve_x[i] = x;
+        invo_curve_y[i] = y;
+        dx = -y + rp * cospa * cos(pa + theta);
+        dy = x + rp * cospa * sin(pa + theta);
+        norm = 1.0f / sqrt(dx * dx + dy * dy);
+        invo_curve_xn[i] = dy * norm;
+        invo_curve_yn[i] = -dy * norm;
+    }
+}
+
+// method calls computation of the verticies for the involute and
 // stores them in arrays invo_curve_x[], invo_curve_y[]
 void gear::involute()
 {
-    // Ncrit is number of teeth where base circle coincides with dedendum
-    unsigned int Ncrit = 2.0 * (Df - 1.0) / (1.0 - cos(pa));
-    if(N > Ncrit) involute_pure(); // full involute
-    else sectorFillet();   // involute base circle has been cut */
-
-
-    /*
-     auto rcal = [](float theta, float x, float y){
-        x += filletR * cos(theta);
-        y += filletR * sin(theta);
-        return (float) sqrt(x * x + y * y);
-    };
-
-    float rfillet;
-    rfillet = sqrtf(rbc * rbc + filletR * filletR) - filletR;
-    std::cout << "rmin = " << rmin << ", rfillet = " << rfillet << std::endl;
-    // Ncrit is number of teeth where generator circle coincides with dedendum
-    unsigned int Ncrit = 2.0 * (Df - 1.0) / (1.0 - cos(pa));
-    if(N > Ncrit){
-        involute_pure(); // full involute
-        float r, theta, x, y;
-        float rc, phi;
-        theta = pa; // puts on base circle
-        r = rmin + filletR;
-        for(int i=0; i<4; ++i){
-            NewtonRaphson(5, r, theta, x, y); // x & y are references for output
-            std::cout << "theta = " << theta << ", x = " << x << ", y = " << y << std::endl;
-            phi = tangent(theta);
-            std::cout << "tangent angle = " << phi << ", angle to rad centre = " << atan(x / y) << std::endl;
-            std::cout << "delR to fillet centre " << rcal(phi, x, y) - rmin - filletR << std::endl;
-            r -= (rcal(phi, x, y) - rmin - filletR);
-        }
-    }
-    else involute_part();   // involute base circle has been cut */
-}
-
-void gear::involute_pure()
-{
-    float x, y, r;
-    float xd, yd, norm;
-    float theta, del;
-
-    theta = -sinpa / cospa; // puts on base circle
-    theta *= (rp - rmin) / (rp - rbc); // first guess for dedendum
-    del = (rmaj - rmin) / (float)(Ninv - 1);
-    for(unsigned int i=0; i<Ninv; ++i){
-        r = rmin + (float) i * del;
-        NewtonRaphson(6, r, theta, x, y);
-        invo_curve_x[i] = x;
-        invo_curve_y[i] = y;
-        xd = -y + rp * cospa * cos(pa + theta);
-        yd = x + rp * cospa * sin(pa + theta);
-        norm = 1.0f / sqrtf(xd * xd + yd * yd);
-        invo_curve_xn[i] = yd * norm;
-        invo_curve_yn[i] = -xd * norm;
-        r = sqrtf(x * x + y * y);
-        //std::cout << "x = " << x << ", y = " << y << ", r = " << r;
-        //std::cout << ", xn = " << invo_curve_xn[i] << ", yn = " << invo_curve_yn[i];
-        //std::cout << ", angle = " << atan(invo_curve_yn[i] / invo_curve_xn[i]) * 180.0f / pi;
-        //std::cout << ", theta = " << theta << std::endl;
-    }
-}
-
-// Nfillet, filletR, Ninv
-
-// tooth cuts under rbc
-void gear::involute_part()
-{
-    float x, y, r;
-    float xd, yd;
-    float theta, norm;
-    float cost, sint;
-
-    // point on base circle
-    theta = -sinpa / cospa;
-    cost = cos(pa + theta);
-    sint = sin(pa + theta);
-    x = -rbc * sint + rp * (sinpa + theta * cospa) * cost;
-    y = rbc * cost + rp * (sinpa + theta * cospa) * sint;
-    r = sqrtf(x * x + y * y);
-    invo_curve_x[1] = x;
-    invo_curve_y[1] = y;
-    xd = y; // on base circle, norm is tangent to circle for straight line
-    yd = -x;  // from this point, is a corner
-    norm = 1.0f / sqrtf(xd * xd + yd * yd);
-    invo_curve_xn[0] = invo_curve_xn[1] = xd * norm;
-    invo_curve_yn[0] = invo_curve_yn[1] = yd * norm;
-
-    // point on minor diameter
-    invo_curve_x[0] = x * rmin / r;
-    invo_curve_y[0] = y * rmin / r;
-    theta *= 0.5; // half way between pitch circle and base circle
-    const float dr = (rmaj - rbc) / (float) (Ninv - 2);
-    for(unsigned int i=2; i<Ninv; ++i){
-        r = (float)(i - 1) * dr + rbc;
-        NewtonRaphson(6, r, theta, x, y);
-        invo_curve_x[i] = x;
-        invo_curve_y[i] = y;
-        xd = -y + rp * cospa * cos(pa + theta);
-        yd = x + rp * cospa * sin(pa + theta);
-        norm = 1.0f / sqrtf(xd * xd + yd * yd);
-        invo_curve_xn[i] = yd * norm;
-        invo_curve_yn[i] = -xd * norm;
-    }
+    sectorFillet();
 }
 
 // find coords to bring involute curve to distance r from centre

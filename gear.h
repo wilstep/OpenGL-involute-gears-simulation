@@ -23,8 +23,7 @@ private:
     void sectorI(unsigned int n);
     void involute();
     void sectorFillet();
-    void involute_pure();
-    void involute_part();
+    void involute_fillet();
     void NewtonRaphson(unsigned int n, const float r, float &theta, float &x, float &y);
     float tangent(float theta);
     const unsigned int N, nVertices, nIndices, n1indices;
