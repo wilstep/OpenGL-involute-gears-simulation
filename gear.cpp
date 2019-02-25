@@ -20,8 +20,8 @@
 static const float pi = 3.1415926535897932f;
 static const float Df = 2.157f; // tooth depth
 static float gap = 0.52; // number less than 0.5: side clearance on circular pitch
-static const unsigned int Ninv = 15; // number of involute vertices on one side of tooth, incuding fillet curve
-static const unsigned int Nfillet = 4; // number of extra points used for tooth root fillet curve, must be 2 or more
+static const unsigned int Ninv = 16; // number of involute vertices on one side of tooth, incuding fillet curve
+static const unsigned int Nfillet = 5; // number of extra points used for tooth root fillet curve, must be 2 or more
 static const float filletR = 0.4; // radius of tooth root fillet
 
 gear::gear(unsigned int Ni, float pai, float dZ):N(Ni), nVertices(8*(1+Ninv)*Ni+2), nIndices(24*Ninv*Ni),

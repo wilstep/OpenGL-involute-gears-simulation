@@ -129,10 +129,9 @@ void  OGLWidget::buildGears(bool redo)
 
 
     if(redo){
-        //glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
-        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo); // element buffer object
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
+        setSeperation(delSeperation);
     }
     else{
         // Create Vertex Array Object
@@ -157,6 +156,56 @@ void  OGLWidget::buildGears(bool redo)
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
         glEnableVertexAttribArray(1);
     }
+}
+
+// find coords to bring involute curve to distance r from centre
+// theta inputs initial guess for its value, x and y input are garbage
+//float OGLWidget::NewtonRaphson(const unsigned int n, const unsigned int N, const float del)
+float OGLWidget::NewtonRaphson(const unsigned int n, const float rp, const float fac)
+{
+    float cost, sint;
+    float x, y;
+    float dx, dy, dr;
+    float rx;
+    float del_theta;
+    float theta = 0.05f;
+    //const float rp = 0.5 * (float) N;
+    //const float r = rp + del;
+    const float r = rp * fac;
+    const float sinpa = sin(pa), cospa = cos(pa);
+    const float rbc = rp * cospa;
+
+    for(unsigned int i=0; i<n; ++i){
+        cost = cos(pa + theta);
+        sint = sin(pa + theta);
+        x = -rbc * sint + rp * (sinpa + theta * cospa) * cost;
+        y = rbc * cost + rp * (sinpa + theta * cospa) * sint;
+        rx = sqrtf(x * x + y * y);
+        dx = -rbc * cost + rp * cospa * cost - rp * (sinpa + theta * cospa) * sint;
+        dy = -rbc * sint + rp * cospa * sint + rp * (sinpa + theta * cospa) * cost;
+        dr = x * dx + y * dy;
+        dr /= rx;
+        del_theta = (r - rx) / dr;
+        theta += del_theta;
+        //std::cout << "theta = " << theta << ", rx = " << rx << ", r = " << r << std::endl;
+    }
+    cost = cos(pa + theta);
+    sint = sin(pa + theta);
+    x = -rbc * sint + rp * (sinpa + theta * cospa) * cost;
+    y = rbc * cost + rp * (sinpa + theta * cospa) * sint;
+    return atan(x/y) * 180.0f / 3.141592654; // convert from
+}
+
+
+void OGLWidget::setSeperation(const float del)
+{
+    delSeperation = del;
+    const float delh = 0.5 * del;
+    float rpA, rpB, fac;
+    rpA = (float) Na * 0.5;
+    rpB = (float) Nb * 0.5;
+    fac = (rpA + rpB + del) / (rpA + rpB);
+    delTheta_a = NewtonRaphson(7, rpA, fac) + NewtonRaphson(7, rpB, fac) * (float) Nb / (float) Na;
 }
 
 void OGLWidget::mousePressEvent(QMouseEvent *event)
@@ -250,7 +299,8 @@ void OGLWidget::paintGL()
     }
 
     const qreal retinaScale = devicePixelRatio();
-    const float delXa = -(float) Nb * 0.5f, delXb = (float) Na * 0.5f;
+    const float delXa = -((float) Nb + delSeperation) * 0.5f;
+    const float delXb = ((float) Na + delSeperation) * 0.5f;
 
     glViewport(0, 0, width() * retinaScale, height() * retinaScale);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -263,11 +313,12 @@ void OGLWidget::paintGL()
     matrixA = matrixA * matRot;
     matrixB = matrixA; // store in matrix_b for later use
     matrixA.translate(delXa, 0.0f, 0.0f);
-    matrixA.rotate(theta_a, 0.0f, 0.0f, 1.0f);
+    matrixA.rotate(theta_a + delTheta_a, 0.0f, 0.0f, 1.0f);
     matrixB.translate(delXb, 0.0f, 0.0f);
     matrixB.rotate(theta_b, 0.0f, 0.0f, 1.0f);
+
     matRotA = matRot;
-    matRotA.rotate(theta_a, 0.0f, 0.0f, 1.0f);
+    matRotA.rotate(theta_a + delTheta_a, 0.0f, 0.0f, 1.0f);
     matRotB = matRot;
     matRotB.rotate(theta_b, 0.0f, 0.0f, 1.0f);
 

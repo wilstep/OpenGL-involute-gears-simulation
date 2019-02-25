@@ -30,6 +30,7 @@ private:
     // pitch radius, base circle radius, major radius, minor radius
     const float rp, rbc, rmaj, rmin, delZ;
     const float pa, cospa, sinpa;
+    float delTheta = 0.0f;
     std::vector<float> verts;
     std::vector<float>::iterator vert_it;
     std::vector<float> vertx, verty, vertxn, vertyn;

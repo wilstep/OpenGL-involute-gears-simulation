@@ -6,6 +6,7 @@
 #define MAINWINDOW_H
 #include <memory>
 #include <QMainWindow>
+#include <QMessageBox>
 #include <QTimer>
 #include <QRadioButton>
 #include <QtMath>
@@ -33,13 +34,15 @@ private slots:
     void on_radioButton_25_clicked();
     void on_spinBox_Na_editingFinished();
     void on_spinBox_Nb_editingFinished();
-    void on_horizontalScrollBar_valueChanged(int value);
+    void on_speedScrollBar_valueChanged(int value);
     void on_lightPosX_editingFinished();
     void on_lightPosY_editingFinished();
     void on_lightPosZ_editingFinished();
     void on_resetButton_clicked();
     void on_spinBox_Na_valueChanged(int);
     void on_spinBox_Nb_valueChanged(int);
+    void on_SeperationSpinBox_valueChanged(double x);
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -47,7 +50,7 @@ private:
     bool pause = false;
     float pa = 20.0f * M_PI / 180.0f;
     unsigned int Na, Nb;
-    bool rebuildGears = false;
+    bool rebuildGears = false, Nchange = false;
 };
 
 #endif // MAINWINDOW_H

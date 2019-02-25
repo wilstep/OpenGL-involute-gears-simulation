@@ -25,7 +25,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->myOGLWidget->setPa(pa);
     ui->myOGLWidget->setLightX((float) ui->lightPosX->value());
     ui->myOGLWidget->setLightY((float) ui->lightPosY->value());
-    ui->myOGLWidget->setLightZ((float) ui->lightPosZ->value());
+    ui->myOGLWidget->setLightZ((float) ui->lightPosZ->value()); 
+    float speed = (float) ui->speedScrollBar->value() * 0.25f;
+    ui->myOGLWidget->setSpeed(speed);
 }
 
 MainWindow::~MainWindow()
@@ -49,12 +51,18 @@ void MainWindow::on_resetButton_clicked()
 }
 
 void MainWindow::on_pausePlayButton_clicked()
-{
+{  
     if(pause && rebuildGears){
+        Na = ui->spinBox_Na->value();
+        ui->myOGLWidget->setNa(Na);
+        Nb = ui->spinBox_Nb->value();
+        ui->myOGLWidget->setNb(Nb);
+        if(Nchange) ui->myOGLWidget->reZeroThetas();
         ui->pausePlayButton->setText("Play");
         ui->myOGLWidget->rebuild();
         ui->myOGLWidget->update();
         rebuildGears = false;
+        Nchange = false;
     }
     else if(pause){ // activate simulation
         ui->pausePlayButton->setText("Pause");
@@ -106,11 +114,8 @@ void MainWindow::on_spinBox_Na_editingFinished()
 {
     unsigned int N = ui->spinBox_Na->value();
     if(N != Na){
-        Na = N;
-        ui->myOGLWidget->setNa(Na);
         rebuildGears = true;
-        ui->myOGLWidget->reZeroThetas();
-        ui->pausePlayButton->setText("Rebuild");
+        Nchange = true;
     }
 }
 
@@ -118,11 +123,8 @@ void MainWindow::on_spinBox_Nb_editingFinished()
 {
     unsigned int N = ui->spinBox_Nb->value();
     if(N != Nb){
-        Nb = N;
-        ui->myOGLWidget->setNb(Nb);
         rebuildGears = true;
-        ui->myOGLWidget->reZeroThetas();
-        ui->pausePlayButton->setText("Rebuild");
+        Nchange = true;
     }
 }
 
@@ -144,8 +146,7 @@ void MainWindow::drawOpenGL()
     }
 }
 
-
-void MainWindow::on_horizontalScrollBar_valueChanged(int value)
+void MainWindow::on_speedScrollBar_valueChanged(int value)
 {
     float speed = (float) value * 0.25f;
     ui->myOGLWidget->setSpeed(speed);
@@ -167,4 +168,25 @@ void MainWindow::on_lightPosZ_editingFinished()
 {
     float z = (float) ui->lightPosZ->value();
     ui->myOGLWidget->setLightZ(z);
+}
+
+void MainWindow::on_SeperationSpinBox_valueChanged(double x)
+{
+    ui->myOGLWidget->setSeperation((float) x);
+    if(pause) ui->myOGLWidget->update();
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    //QMessageBox::about(0, "Trolltech", "<a href='http://www.trolltech.com'>Trolltech</a>");
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Involute Gear Simulator");
+
+    static const char *msg = "This program was made and developed by Stephen R. Williams\n"
+        "<br>Feb 2019"
+        "<br><br>See <a href='https://swtinkering.blogspot.com/2019/02/involute-gear-simulator-built-with-qt.html'>blog</a> entry for more details"
+        "<br><br>License GPL-3.0";
+    msgBox.setTextFormat(Qt::RichText);
+    msgBox.setText(msg);
+    msgBox.exec();
 }

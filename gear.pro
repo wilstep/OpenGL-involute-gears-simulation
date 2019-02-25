@@ -5,9 +5,9 @@
 #-------------------------------------------------
 
 # for linux
-unix: QMAKE_CXXFLAGS += -std=c++17
+unix: QMAKE_CXXFLAGS += -std=c++14
 # for windows
-win32: CONFIG += c++17
+win32: CONFIG += c++14
 
 QT       += core gui
 

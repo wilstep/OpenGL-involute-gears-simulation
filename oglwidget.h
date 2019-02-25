@@ -28,6 +28,7 @@ public:
     void setLightX(float x){ lightX = x; update(); }
     void setLightY(float y){ lightY = y; update(); }
     void setLightZ(float z){ lightZ = z; update(); }
+    void setSeperation(const float del);
     void reset() { delX = delY = 0.0f; delZ = delZ0; QuatOrient = QQuaternion(); update(); }
     void reZeroThetas() { theta_a = theta_b = 0.0; }
 protected:
@@ -36,6 +37,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void buildGears(bool redo=false);
+    float NewtonRaphson(const unsigned int n, const float rp, const float fac);
 
     int rotate;
     GLuint shaderProgram;
@@ -47,12 +49,13 @@ protected:
     int xCentre, yCentre;
     const float delZ0 = -125.0f;
     float delX =0.0f, delY = 0.0f, delZ = delZ0;
+    float delSeperation = 0.0f, delTheta_a = 0.0f;
     float pa;
     GLuint Na, Nb, Nind_a, Nind1_a, Nind_b, Nind1_b;
     const double delTheta = 0.1;
     double theta_a = 0.0, theta_b = 0.0;
     bool rebuild_flg = false;
-    float speed = 5.0;
+    float speed;
     float lightX, lightY, lightZ;
 };
 
