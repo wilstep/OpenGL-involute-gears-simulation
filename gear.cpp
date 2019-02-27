@@ -19,10 +19,10 @@
 
 static const float pi = 3.1415926535897932f;
 static const float Df = 2.157f; // tooth depth
-static float gap = 0.52; // number less than 0.5: side clearance on circular pitch
+static float gap = 0.52f; // number less than 0.5: side clearance on circular pitch
 static const unsigned int Ninv = 16; // number of involute vertices on one side of tooth, incuding fillet curve
 static const unsigned int Nfillet = 5; // number of extra points used for tooth root fillet curve, must be 2 or more
-static const float filletR = 0.4; // radius of tooth root fillet
+static const float filletR = 0.4f; // radius of tooth root fillet
 
 gear::gear(unsigned int Ni, float pai, float dZ):N(Ni), nVertices(8*(1+Ninv)*Ni+2), nIndices(24*Ninv*Ni),
     n1indices(Ni *(12*Ninv+6)), rp((float) Ni / 2.0f), rbc(rp * cos(pai)), rmaj((float) (Ni+2) / 2.0f),
@@ -65,7 +65,7 @@ void gear::sectorVerts()
     vertxn.resize(Nt); // norms to involute
     vertyn.resize(Nt); // norms to involute
     involute();
-    del_gap = 2.0f * (1.0f - gap) * pi / (float) N;
+    del_gap = 2.0f * (1.0f - gap) * pi / static_cast<float>(N);
     // rotate involute after flipping for 2nd side
     sinx = sin(del_gap);
     cosx = cos(del_gap);
