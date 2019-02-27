@@ -31,6 +31,8 @@ public:
     void setSeperation(const float del);
     void reset() { delX = delY = 0.0f; delZ = delZ0; QuatOrient = QQuaternion(); update(); }
     void reZeroThetas() { theta_a = theta_b = 0.0; }
+    std::string& getOGLVersionInfo(){ return OGLVersionInfo; }
+    std::string& getShaderVersionInfo(){ return ShaderVersionInfo; }
 protected:
     void initializeGL();
     void paintGL();
@@ -38,7 +40,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void buildGears(bool redo=false);
     float NewtonRaphson(const unsigned int n, const float rp, const float fac);
-
+    std::string OGLVersionInfo, ShaderVersionInfo;
     int rotate;
     GLuint shaderProgram;
     GLuint vao, vbo, ebo;

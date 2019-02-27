@@ -95,8 +95,11 @@ void OGLWidget::initializeGL()
     uniPerspective = glGetUniformLocation(shaderProgram, "perspective");
     uniLightPos = glGetUniformLocation(shaderProgram, "lightPos");
     uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
-    std::cout << "\nOpenGL core profile version string: " << glGetString(GL_VERSION) << std::endl;
-    std::cout << "OpenGL shading language version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+    OGLVersionInfo = "OpenGL core profile version string: ";
+    OGLVersionInfo += reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    ShaderVersionInfo = "OpenGL shading language version: ";
+    ShaderVersionInfo += reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+    //std::cout << "OpenGL shading language version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
     xCentre = frameSize().width() / 2;
     yCentre = frameSize().height() / 2;
 }
@@ -200,8 +203,8 @@ float OGLWidget::NewtonRaphson(const unsigned int n, const float rp, const float
 void OGLWidget::setSeperation(const float del)
 {
     delSeperation = del;
-    const float delh = 0.5 * del;
     float rpA, rpB, fac;
+
     rpA = (float) Na * 0.5;
     rpB = (float) Nb * 0.5;
     fac = (rpA + rpB + del) / (rpA + rpB);

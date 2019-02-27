@@ -182,11 +182,14 @@ void MainWindow::on_pushButton_clicked()
     QMessageBox msgBox;
     msgBox.setWindowTitle("Involute Gear Simulator");
 
-    static const char *msg = "This program was made and developed by Stephen R. Williams\n"
+    std::string msg = "This software was made and developed by Stephen R. Williams"
         "<br>Feb 2019"
         "<br><br>See <a href='https://swtinkering.blogspot.com/2019/02/involute-gear-simulator-built-with-qt.html'>blog</a> entry for more details"
-        "<br><br>License GPL-3.0";
+        "<br><br>License GPL-3.0<br><br>";
+    msg += ui->myOGLWidget->getOGLVersionInfo();
+    msg += "<br>";
+    msg += ui->myOGLWidget->getShaderVersionInfo();
     msgBox.setTextFormat(Qt::RichText);
-    msgBox.setText(msg);
+    msgBox.setText(msg.c_str());
     msgBox.exec();
 }
