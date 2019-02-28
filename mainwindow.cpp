@@ -124,6 +124,7 @@ void MainWindow::on_spinBox_Na_editingFinished()
     if(N != Na){
         rebuildGears = true;
         Nchange = true;
+        ui->pausePlayButton->setText("Rebuild");
     }
 }
 
@@ -133,6 +134,7 @@ void MainWindow::on_spinBox_Nb_editingFinished()
     if(N != Nb){
         rebuildGears = true;
         Nchange = true;
+        ui->pausePlayButton->setText("Rebuild");
     }
 }
 
