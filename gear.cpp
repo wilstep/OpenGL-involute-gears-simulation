@@ -73,7 +73,7 @@ void gear::sectorVerts()
     unsigned int i, j;
     float x, y, xn, yn;
     float sinx, cosx;
-    float del_gap;
+    float del_tooth;
     const unsigned int Nt = 2 * Ninv;
 
     vertx.resize(Nt);
@@ -81,10 +81,10 @@ void gear::sectorVerts()
     vertxn.resize(Nt); // norms to involute
     vertyn.resize(Nt); // norms to involute
     involute();
-    del_gap = 2.0f * (1.0f - gap) * pi / static_cast<float>(N);
+    del_tooth = 2.0f * (1.0f - gap) * pi / static_cast<float>(N);
     // rotate involute after flipping for 2nd side
-    sinx = sin(del_gap);
-    cosx = cos(del_gap);
+    sinx = sin(del_tooth);
+    cosx = cos(del_tooth);
     for(i=0; i<Ninv; ++i){
         j = Ninv + i;
         x = -(vertx[i] = invo_curve_x[i]);
@@ -606,6 +606,10 @@ void gear::RotateVerts(float theta)
         y = verts[j+1];
         verts[j] = cosx * x - sinx * y;
         verts[j+1] = sinx * x + cosx * y;
+        x = verts[j+3];
+        y = verts[j+4];
+        verts[j+3] = cosx * x - sinx * y;
+        verts[j+4] = sinx * x + cosx * y;
     }
 }
 
