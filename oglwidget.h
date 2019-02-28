@@ -28,6 +28,7 @@ public:
     void setLightX(float x){ lightX = x; update(); }
     void setLightY(float y){ lightY = y; update(); }
     void setLightZ(float z){ lightZ = z; update(); }
+    void setBExact(bool x){ bExact = x; }
     void setSeperation(const float del);
     void reset() { delX = delY = 0.0f; delZ = delZ0; QuatOrient = QQuaternion(); update(); }
     void reZeroThetas() { theta_a = theta_b = 0.0; }
@@ -54,6 +55,7 @@ protected:
     float delSeperation = 0.0f, delTheta_a = 0.0f;
     float pa;
     GLuint Na, Nb, Nind_a, Nind1_a, Nind_b, Nind1_b;
+    bool bExact = true;
     const double delTheta = 0.1;
     double theta_a = 0.0, theta_b = 0.0;
     bool rebuild_flg = false;

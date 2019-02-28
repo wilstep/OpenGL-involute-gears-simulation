@@ -30,7 +30,7 @@
       <x>8</x>
       <y>10</y>
       <width>162</width>
-      <height>181</height>
+      <height>81</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -43,7 +43,7 @@
      <enum>QFrame::Sunken</enum>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Use mouse to&lt;br/&gt;reorientate&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; color:#00557f;&quot;&gt;• Left button to roll&lt;br/&gt;• Right button to rotate&lt;br/&gt;• Shift &amp;amp; left button to&lt;br/&gt;   translate&lt;br/&gt;• Shift &amp;amp; right button&lt;br/&gt;   to zoom&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Use mouse to&lt;br/&gt;reorientate&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -402,6 +402,54 @@
      <double>0.050000000000000</double>
     </property>
    </widget>
+   <widget class="QPushButton" name="instructionsButton">
+    <property name="geometry">
+     <rect>
+      <x>48</x>
+      <y>60</y>
+      <width>85</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Instructions</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="toggleLabel">
+    <property name="geometry">
+     <rect>
+      <x>8</x>
+      <y>105</y>
+      <width>162</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Panel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10.5pt; font-weight:600;&quot;&gt;Exact Involute&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="toggleButton">
+    <property name="geometry">
+     <rect>
+      <x>48</x>
+      <y>130</y>
+      <width>85</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>toggle</string>
+    </property>
+   </widget>
    <zorder>layoutWidget4</zorder>
    <zorder>layoutWidget3</zorder>
    <zorder>layoutWidget2</zorder>
@@ -416,6 +464,9 @@
    <zorder>label_6</zorder>
    <zorder>label_7</zorder>
    <zorder>SeperationSpinBox</zorder>
+   <zorder>instructionsButton</zorder>
+   <zorder>toggleLabel</zorder>
+   <zorder>toggleButton</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

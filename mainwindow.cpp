@@ -28,6 +28,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->myOGLWidget->setLightZ((float) ui->lightPosZ->value()); 
     float speed = (float) ui->speedScrollBar->value() * 0.25f;
     ui->myOGLWidget->setSpeed(speed);
+    ui->toggleLabel->setAlignment(Qt::AlignHCenter);
+    ui->toggleLabel->setTextFormat(Qt::RichText);
+    ui->toggleLabel->setText("<span style='font-size:10.5pt; font-weight:600;'>Exact Involute</span>");
+    ui->toggleButton->setEnabled(false);
 }
 
 MainWindow::~MainWindow()
@@ -55,6 +59,8 @@ void MainWindow::on_pausePlayButton_clicked()
     if(pause && rebuildGears){
         Na = ui->spinBox_Na->value();
         ui->myOGLWidget->setNa(Na);
+        float speed = (float) ui->speedScrollBar->value() * 0.25f;
+        ui->myOGLWidget->setSpeed(speed);
         Nb = ui->spinBox_Nb->value();
         ui->myOGLWidget->setNb(Nb);
         if(Nchange) ui->myOGLWidget->reZeroThetas();
@@ -72,6 +78,7 @@ void MainWindow::on_pausePlayButton_clicked()
         ui->radioButton_25->setEnabled(false);
         ui->spinBox_Na->setEnabled(false);
         ui->spinBox_Nb->setEnabled(false);
+        ui->toggleButton->setEnabled(false);
         pause = !pause;
     }
     else{ // pause simulation
@@ -82,6 +89,7 @@ void MainWindow::on_pausePlayButton_clicked()
         ui->radioButton_25->setEnabled(true);
         ui->spinBox_Na->setEnabled(true);
         ui->spinBox_Nb->setEnabled(true);
+        ui->toggleButton->setEnabled(true);
         pause = !pause;
     }
 }
@@ -128,15 +136,6 @@ void MainWindow::on_spinBox_Nb_editingFinished()
     }
 }
 
-void MainWindow::on_spinBox_Na_valueChanged(int)
-{
-    ui->pausePlayButton->setText("Rebuild");
-}
-
-void MainWindow::on_spinBox_Nb_valueChanged(int)
-{
-    ui->pausePlayButton->setText("Rebuild");
-}
 
 void MainWindow::drawOpenGL()
 {
@@ -192,4 +191,39 @@ void MainWindow::on_pushButton_clicked()
     msgBox.setTextFormat(Qt::RichText);
     msgBox.setText(msg.c_str());
     msgBox.exec();
+}
+
+void MainWindow::on_instructionsButton_clicked()
+{
+    //QMessageBox::about(0, "Trolltech", "<a href='http://www.trolltech.com'>Trolltech</a>");
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Mouse Instructions");
+
+    std::string msg = "<html><head/><body><p align='center'><span style=' font-size:12pt; font-weight:600;"
+                      "'>Use mouse to<br/>reorientate</span></p><p><span style=' font-size:10pt; color:#00557f;'>"
+                      "• Left button to roll<br/>"
+                      "• Right button to rotate<br/>"
+                      "• Shift &amp; left button to translate<br/>"
+                      "• Shift &amp; right button to zoom</span></p></body></html>";
+    msgBox.setTextFormat(Qt::RichText);
+    msgBox.setText(msg.c_str());
+    msgBox.exec();
+}
+
+void MainWindow::on_toggleButton_clicked()
+{
+    rebuildGears = true;
+    ui->pausePlayButton->setText("Rebuild");
+
+    if(bExact){
+        ui->toggleLabel->setText("<span style='font-size:10.5pt; font-weight:600;'>Circle Approximation</span>");
+        bExact = false;
+    }
+    else{
+        ui->toggleLabel->setText("<span style='font-size:10.5pt; font-weight:600;'>Exact Involute</span>");
+        bExact = true;
+    }
+    ui->myOGLWidget->setBExact(bExact);
+    rebuildGears = true;
+    ui->pausePlayButton->setText("Rebuild");
 }

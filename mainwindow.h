@@ -39,10 +39,10 @@ private slots:
     void on_lightPosY_editingFinished();
     void on_lightPosZ_editingFinished();
     void on_resetButton_clicked();
-    void on_spinBox_Na_valueChanged(int);
-    void on_spinBox_Nb_valueChanged(int);
     void on_SeperationSpinBox_valueChanged(double x);
     void on_pushButton_clicked();
+    void on_instructionsButton_clicked();
+    void on_toggleButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -51,6 +51,7 @@ private:
     float pa = 20.0f * M_PI / 180.0f;
     unsigned int Na, Nb;
     bool rebuildGears = false, Nchange = false;
+    bool bExact = true;
 };
 
 #endif // MAINWINDOW_H

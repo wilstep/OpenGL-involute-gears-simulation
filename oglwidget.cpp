@@ -107,8 +107,16 @@ void OGLWidget::initializeGL()
 void  OGLWidget::buildGears(bool redo)
 {
     // initialise gear objects, which provide vertices and indices
-    auto myGa = std::make_unique<gear>(Na, pa, 5.0f); // gear slightly thicker so it shows above any overlap
-    auto myGb = std::make_unique<gear>(Nb, pa, 5.0001f);
+    std::unique_ptr<gear> myGa, myGb;
+
+    if(bExact){
+        myGa = std::make_unique<gear>(Na, pa, 5.0f); // gear slightly thicker so it shows above any overlap
+        myGb = std::make_unique<gear>(Nb, pa, 5.0001f);
+    }
+    else{
+        myGa = std::make_unique<gearApprox>(Na, pa, 5.0f); // gear slightly thicker so it shows above any overlap
+        myGb = std::make_unique<gearApprox>(Nb, pa, 5.0001f);
+    }
 
     Nind_a = myGa -> GetNInds();
     Nind1_a = myGa -> GetN1Inds();

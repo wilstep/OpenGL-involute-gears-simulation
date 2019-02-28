@@ -16,16 +16,18 @@ public:
     unsigned int GetN1Inds(){ return n1indices; }
     unsigned int GetNverts() { return nVertices; }
     void RotateVerts(float);
-private:
+protected:
+    gear(unsigned int Ni, float pai, float dZ, float rmaji);
     void sectorVerts();
     void sectorIndicies();
     void sectorV(unsigned int n);
     void sectorI(unsigned int n);
     void involute();
-    void sectorFillet();
-    void involute_fillet();
-    void NewtonRaphson(unsigned int n, const float r, float &theta, float &x, float &y);
-    float tangent(float theta);
+    virtual void sectorFillet();
+    virtual void involute_fillet();
+    virtual void NewtonRaphson(unsigned int n, const float r, float &theta, float &x, float &y);
+    virtual float tangent(float theta);
+
     const unsigned int N, nVertices, nIndices, n1indices;
     // pitch radius, base circle radius, major radius, minor radius
     const float rp, rbc, rmaj, rmin, delZ;
@@ -38,6 +40,17 @@ private:
     std::vector<unsigned int> inds0, inds1; // two colours
     std::vector<unsigned int>::iterator ind_it0, ind_it1;
     std::vector<float> invo_curve_x, invo_curve_y, invo_curve_xn, invo_curve_yn;
+};
+
+class gearApprox:public gear
+{
+public:
+    gearApprox(unsigned int Ni, float pai, float dZ);
+private:
+    void sectorFillet();
+    void involute_fillet();
+    void NewtonRaphson(unsigned int n, const float r, float &theta, float &x, float &y);
+    float tangent(float theta);
 };
 
 #endif // GEAR_H
