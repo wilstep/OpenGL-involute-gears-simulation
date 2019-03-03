@@ -3,7 +3,7 @@ A realistic graphical simulation of one involute gear driving another
 
 This software is written with QT creator 3.5.1 and uses OpenGL
 
-to compile 
+to compile on Linux
 
 `qmake gear.pro`
 
