@@ -12,3 +12,5 @@ to compile on Linux
 then run
 
 `gear`
+
+Or load project into QT Creator and compile
