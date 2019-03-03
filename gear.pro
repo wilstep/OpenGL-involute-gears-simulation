@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2019-02-14T09:01:11
+# Project created by QtCreator 2019-03-03T00:58:43
 #
 #-------------------------------------------------
 
@@ -18,16 +18,18 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    oglwidget.cpp \
-    gear.cpp
+        widget.cpp\
+        gear.cpp\
+        oglwidget.cpp \
+        scroller.cpp
 
-HEADERS  += mainwindow.h \
-    oglwidget.h \
-    gear.h \
-    myshaders.h
+HEADERS  += myshaders.h \
+        widget.h\
+        gear.h\
+        oglwidget.h\
+        scroller.h
 
-FORMS    += mainwindow.ui
+FORMS    += widget.ui
 
 DISTFILES += \
     gears.png

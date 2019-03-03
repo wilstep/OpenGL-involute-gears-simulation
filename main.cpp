@@ -1,10 +1,7 @@
-// OpenGL Involute gear simulation
-// Stephen R Williams, Feb 2019
-// License: GPL V3
-
-#include "mainwindow.h"
+#include "widget.h"
+#include "scroller.h"
 #include <QApplication>
-#include <iostream>
+#include <QScrollArea>
 #include <QIcon>
 #include <fstream>
 
@@ -57,11 +54,18 @@ public:
 int main(int argc, char *argv[])
 {
     MyApplication app(argc, argv);
-    MainWindow window;
-    //window.setFixedSize(1390, 920);
-
+    
+    Scroller *scroller = new Scroller;
+    Widget *wiget = new Widget(scroller);
+    scroller->setWidget(wiget);
+    auto w = QDesktopWidget().availableGeometry().width();
+    auto h = QDesktopWidget().availableGeometry().height();
+    w = (w > 1392) ? 1392 : w;
+    h = (h > 922) ? 922 : h;
+    scroller->resize(w, h);
     QIcon icon(":/gears.png");
-    window.setWindowIcon(icon);
-    window.show();
+    scroller->setWindowIcon(icon);
+    scroller->show();
+
     return app.exec();
 }
