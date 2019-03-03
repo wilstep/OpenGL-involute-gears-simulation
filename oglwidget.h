@@ -30,6 +30,7 @@ public:
     void setLightZ(float z){ lightZ = z; update(); }
     void setBExact(bool x){ bExact = x; }
     void setSeperation(const float del);
+    void setPerspective(float x) { perspective = x; bSetPerspective = true; }
     void reset() { delX = delY = 0.0f; delZ = delZ0; QuatOrient = QQuaternion(); update(); }
     void reZeroThetas() { theta_a = theta_b = 0.0; }
     std::string& getOGLVersionInfo(){ return OGLVersionInfo; }
@@ -55,12 +56,13 @@ protected:
     float delSeperation = 0.0f, delTheta_a = 0.0f;
     float pa;
     GLuint Na, Nb, Nind_a, Nind1_a, Nind_b, Nind1_b;
-    bool bExact = true;
+    bool bExact = true, bSetPerspective = true;
     const double delTheta = 0.1;
     double theta_a = 0.0, theta_b = 0.0;
     bool rebuild_flg = false;
     float speed;
     float lightX, lightY, lightZ;
+    float perspective = 4.0f/3.0f;
 };
 
 #endif // OGLWIDGET_H

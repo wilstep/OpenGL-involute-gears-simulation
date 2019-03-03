@@ -58,10 +58,10 @@ int main(int argc, char *argv[])
 {
     MyApplication app(argc, argv);
     MainWindow window;
-    window.setFixedSize(1390, 920);
+    //window.setFixedSize(1390, 920);
+
     QIcon icon(":/gears.png");
     window.setWindowIcon(icon);
     window.show();
-
     return app.exec();
 }

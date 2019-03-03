@@ -296,12 +296,11 @@ void OGLWidget::incRotate()
 
 void OGLWidget::paintGL()
 {
-    static bool first = true;
-    if(first){
+    if(bSetPerspective){
         QMatrix4x4 matrix;
-        matrix.perspective(45.0f, 4.0f/3.0f, 0.1f, 280.0f);
+        matrix.perspective(45.0f, perspective, 0.1f, 280.0f);
         glUniformMatrix4fv(uniPerspective, 1, GL_FALSE, matrix.data());
-        first = false;
+        bSetPerspective = false;
     }
     glUniform3f(uniLightPos, lightX, lightY, lightZ); // position for light source
     if(rebuild_flg){

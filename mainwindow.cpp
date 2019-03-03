@@ -5,6 +5,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <iostream>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) //, ui(new Ui::MainWindow)
 {
@@ -32,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->toggleLabel->setTextFormat(Qt::RichText);
     ui->toggleLabel->setText("<span style='font-size:10.5pt; font-weight:600;'>Exact Involute</span>");
     ui->toggleButton->setEnabled(false);
+    wMax = QDesktopWidget().screenGeometry().size().width(); // get and store screen size
+    hMax = QDesktopWidget().screenGeometry().size().height();
 }
 
 MainWindow::~MainWindow()
@@ -46,7 +50,10 @@ void MainWindow::on_quitButton_clicked()
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    if(event->key() == Qt::Key_Escape) close();
+    if(event->key() == Qt::Key_Escape){
+        if(bFullScreen) standardScreen();
+        else close();
+    }
 }
 
 void MainWindow::on_resetButton_clicked()
@@ -55,8 +62,8 @@ void MainWindow::on_resetButton_clicked()
 }
 
 void MainWindow::on_pausePlayButton_clicked()
-{  
-    if(pause && rebuildGears){
+{
+    if(bPause && rebuildGears){
         Na = ui->spinBox_Na->value();
         ui->myOGLWidget->setNa(Na);
         float speed = (float) ui->speedScrollBar->value() * 0.25f;
@@ -70,7 +77,7 @@ void MainWindow::on_pausePlayButton_clicked()
         rebuildGears = false;
         Nchange = false;
     }
-    else if(pause){ // activate simulation
+    else if(bPause){ // activate simulation
         ui->pausePlayButton->setText("Pause");
         ui->myOGLWidget->setPaused(false);
         ui->radioButton_14->setEnabled(false);
@@ -79,7 +86,7 @@ void MainWindow::on_pausePlayButton_clicked()
         ui->spinBox_Na->setEnabled(false);
         ui->spinBox_Nb->setEnabled(false);
         ui->toggleButton->setEnabled(false);
-        pause = !pause;
+        bPause = false;
     }
     else{ // pause simulation
         ui->pausePlayButton->setText("Play");
@@ -90,7 +97,7 @@ void MainWindow::on_pausePlayButton_clicked()
         ui->spinBox_Na->setEnabled(true);
         ui->spinBox_Nb->setEnabled(true);
         ui->toggleButton->setEnabled(true);
-        pause = !pause;
+        bPause = true;
     }
 }
 
@@ -141,7 +148,7 @@ void MainWindow::on_spinBox_Nb_editingFinished()
 
 void MainWindow::drawOpenGL()
 {
-    if(!pause){
+    if(!bPause){
         ui->myOGLWidget->update();
         ui->myOGLWidget->incRotate();
     }
@@ -174,10 +181,10 @@ void MainWindow::on_lightPosZ_editingFinished()
 void MainWindow::on_SeperationSpinBox_valueChanged(double x)
 {
     ui->myOGLWidget->setSeperation((float) x);
-    if(pause) ui->myOGLWidget->update();
+    if(bPause) ui->myOGLWidget->update();
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_aboutButton_clicked()
 {
     //QMessageBox::about(0, "Trolltech", "<a href='http://www.trolltech.com'>Trolltech</a>");
     QMessageBox msgBox;
@@ -201,8 +208,8 @@ void MainWindow::on_instructionsButton_clicked()
     QMessageBox msgBox;
     msgBox.setWindowTitle("Mouse Instructions");
 
-    std::string msg = "<html><head/><body><p align='center'><span style=' font-size:12pt; font-weight:600;"
-                      "'>Use mouse to<br/>reorientate</span></p><p><span style=' font-size:10pt; color:#00557f;'>"
+    std::string msg = "<html><head/><body><p align='center'><span style=' font-size:12pt; font-weight:600;'>"
+                      "Use mouse to reorientate</span></p><p><span style=' font-size:10pt; color:#00557f;'>"
                       "• Left button to roll<br/>"
                       "• Right button to rotate<br/>"
                       "• Shift &amp; left button to translate<br/>"
@@ -228,4 +235,90 @@ void MainWindow::on_toggleButton_clicked()
     ui->myOGLWidget->setBExact(bExact);
     rebuildGears = true;
     ui->pausePlayButton->setText("Rebuild");
+}
+
+void MainWindow::on_fullScreenButton_clicked()
+{
+    xMem = x();
+    yMem = y();
+    wMem = width();
+    hMem = height();
+    ui->aboutButton->hide();
+    ui->instructionsButton->hide();
+    ui->pausePlayButton->hide();
+    ui->toggleButton->hide();
+    ui->fullScreenButton->hide();
+    ui->resetButton->hide();
+    ui->quitButton->hide();
+    ui->speedScrollBar->hide();
+    ui->SeperationSpinBox->hide();
+    ui->radioButton_14->hide();
+    ui->radioButton_20->hide();
+    ui->radioButton_25->hide();
+    ui->lightPosX->hide();
+    ui->lightPosY->hide();
+    ui->lightPosZ->hide();
+    ui->spinBox_Na->hide();
+    ui->spinBox_Nb->hide();
+    ui->label->hide();
+    ui->label_2->hide();
+    ui->label_3->hide();
+    ui->label_4->hide();
+    ui->label_5->hide();
+    ui->label_6->hide();
+    ui->label_7->hide();
+    ui->label_8->hide();
+    ui->label_10->hide();
+    ui->label_11->hide();
+    ui->toggleLabel->hide();
+    //vScrollBar->hide();
+
+    auto w = QDesktopWidget().screenGeometry().size().width();
+    auto h = QDesktopWidget().screenGeometry().size().height();
+    ui->myOGLWidget->move(0, 0);
+    ui->myOGLWidget->setPerspective((float) w / (float) h);
+    showFullScreen();
+    ui->myOGLWidget->resize(w, h);
+    bFullScreen = true;
+}
+
+void MainWindow::standardScreen()
+{
+    ui->aboutButton->show();
+    ui->instructionsButton->show();
+    ui->pausePlayButton->show();
+    ui->toggleButton->show();
+    ui->fullScreenButton->show();
+    ui->resetButton->show();
+    ui->quitButton->show();
+    ui->speedScrollBar->show();
+    ui->SeperationSpinBox->show();
+    ui->radioButton_14->show();
+    ui->radioButton_20->show();
+    ui->radioButton_25->show();
+    ui->lightPosX->show();
+    ui->lightPosY->show();
+    ui->lightPosZ->show();
+    ui->spinBox_Na->show();
+    ui->spinBox_Nb->show();
+    ui->label->show();
+    ui->label_2->show();
+    ui->label_3->show();
+    ui->label_4->show();
+    ui->label_5->show();
+    ui->label_6->show();
+    ui->label_7->show();
+    ui->label_8->show();
+    ui->label_10->show();
+    ui->label_11->show();
+    ui->toggleLabel->show();
+    //vScrollBar->show();
+    //setMaximumSize(wMem, hMem);
+    showNormal();
+    ui->myOGLWidget->resize(1200, 900);
+    ui->myOGLWidget->move(180, 10);
+    ui->myOGLWidget->setPerspective(4.0f / 3.0f);
+    resize(wMem, hMem);
+    move(xMem, yMem);
+    bFullScreen = false;
 }

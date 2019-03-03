@@ -10,6 +10,8 @@
 #include <QTimer>
 #include <QRadioButton>
 #include <QtMath>
+#include <QDesktopWidget>
+#include <QScrollBar>
 
 namespace Ui {
     class MainWindow;
@@ -28,7 +30,6 @@ private slots:
     void keyPressEvent(QKeyEvent *event);
     void on_pausePlayButton_clicked();
     void drawOpenGL();
-
     void on_radioButton_14_clicked();
     void on_radioButton_20_clicked();
     void on_radioButton_25_clicked();
@@ -40,18 +41,23 @@ private slots:
     void on_lightPosZ_editingFinished();
     void on_resetButton_clicked();
     void on_SeperationSpinBox_valueChanged(double x);
-    void on_pushButton_clicked();
+    void on_aboutButton_clicked();
     void on_instructionsButton_clicked();
     void on_toggleButton_clicked();
+    void on_fullScreenButton_clicked();
 
 private:
+    void standardScreen();
+
     Ui::MainWindow *ui;
     std::unique_ptr<QTimer> timer;
-    bool pause = false;
+    bool bPause = false, bFullScreen = false;
     float pa = 20.0f * M_PI / 180.0f;
     unsigned int Na, Nb;
     bool rebuildGears = false, Nchange = false;
     bool bExact = true;
+    int xMem, yMem, wMem, hMem; // remember parameters for exiting full screen
+    int wMax, hMax; // screen size
 };
 
 #endif // MAINWINDOW_H
