@@ -5,17 +5,13 @@
 #include "oglwidget.h"
 #include "gear.h"
 
-#include <iostream>
 #include <QTextStream>
-
 #include <QMatrix4x4>
 #include <qmath.h>
-//#include <fstream>
 #include <memory>
 #include <vector>
 #include <string>
 #include<QApplication>
-//#include<cstdlib>
 
 #include "myshaders.h"
 
@@ -41,7 +37,6 @@ void OGLWidget::initializeGL()
     initializeOpenGLFunctions();
     //OGL_ver = std::stof(std::string((const char*) glGetString(GL_VERSION)));
     OGL_ver = std::stof(std::string((const char*) glGetString(GL_SHADING_LANGUAGE_VERSION)));
-    std::cout << "OGL_ver = " << OGL_ver << std::endl;
     if(OGL_ver >= 3.3f) newVer = true;
     // Vertex Shader
     {

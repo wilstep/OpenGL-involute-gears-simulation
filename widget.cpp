@@ -2,8 +2,6 @@
 #include "ui_widget.h"
 #include "scroller.h"
 
-#include <iostream>
-
 Widget::Widget(Scroller *iparent) :
     QWidget(iparent), ui(new Ui::Widget)
 {
@@ -311,9 +309,6 @@ void Widget::standardScreen()
     ui->label_10->show();
     ui->label_11->show();
     ui->toggleLabel->show();
-    //vScrollBar->show();
-    //setMaximumSize(wMem, hMem);
-    //showNormal();
     ui->myOGLWidget->resize(1200, 900);
     ui->myOGLWidget->move(180, 10);
     ui->myOGLWidget->setPerspective(4.0f / 3.0f);

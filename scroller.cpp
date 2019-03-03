@@ -1,5 +1,4 @@
 #include "scroller.h"
-#include <iostream>
 
 Scroller::Scroller() : QScrollArea()
 {
@@ -22,11 +21,11 @@ void Scroller::setSliderPositions()
     //verticalScrollBar()->setSliderPosition(vValue);
     scrollContentsBy(hValue, vValue);
 
-    std::cout << "hValue = " << hValue << ", vValue = " << vValue;
+    /*std::cout << "hValue = " << hValue << ", vValue = " << vValue;
     std::cout << ", h = " << horizontalScrollBar()->sliderPosition();
     std::cout << ", v = " << verticalScrollBar()->sliderPosition();
     std::cout << ", vmax = " << verticalScrollBar()->maximum();
-    std::cout << std::endl;
+    std::cout << std::endl;*/
 }
 
 void Scroller::storeSliderPositions()
