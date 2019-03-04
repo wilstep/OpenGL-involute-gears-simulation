@@ -15,17 +15,8 @@ void Scroller::keyPressEvent(QKeyEvent *event)
 
 void Scroller::setSliderPositions()
 {
-    //horizontalScrollBar()->setMaximum(hValue);
-    //verticalScrollBar()->setMaximum(vValue);
-    //horizontalScrollBar()->setSliderPosition(hValue);
-    //verticalScrollBar()->setSliderPosition(vValue);
-    scrollContentsBy(hValue, vValue);
-
-    /*std::cout << "hValue = " << hValue << ", vValue = " << vValue;
-    std::cout << ", h = " << horizontalScrollBar()->sliderPosition();
-    std::cout << ", v = " << verticalScrollBar()->sliderPosition();
-    std::cout << ", vmax = " << verticalScrollBar()->maximum();
-    std::cout << std::endl;*/
+    horizontalScrollBar()->setValue(hValue);
+    verticalScrollBar()->setValue(vValue);
 }
 
 void Scroller::storeSliderPositions()
