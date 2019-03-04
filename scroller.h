@@ -29,6 +29,7 @@ private:
 
 signals:
     void fullScreenExited();
+    void pauseButtonPressed();
 };
 
 #endif // SCROLLER_H

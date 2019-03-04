@@ -11,6 +11,7 @@ Widget::Widget(Scroller *iparent) :
     timer = std::make_unique<QTimer>(this);
     connect(timer.get(), SIGNAL(timeout()), this, SLOT(drawOpenGL()));
     connect(parent, SIGNAL(fullScreenExited()), this, SLOT(standardScreen()));
+    connect(parent, SIGNAL(pauseButtonPressed()), this, SLOT(on_pausePlayButton_clicked()));
     timer->start(25); // delay in milli seconds
     ui->radioButton_14->setEnabled(false);
     ui->radioButton_20->setEnabled(false);
@@ -50,6 +51,9 @@ void Widget::keyPressEvent(QKeyEvent *event)
     if(event->key() == Qt::Key_Escape){
         if(bFullScreen) parent->showNormal();
         else parent->close();
+    }
+    if(event->key() == Qt::Key_Pause){
+        on_pausePlayButton_clicked();
     }
 }
 

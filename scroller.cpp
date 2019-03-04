@@ -1,4 +1,5 @@
 #include "scroller.h"
+#include <iostream>
 
 Scroller::Scroller() : QScrollArea()
 {
@@ -10,6 +11,10 @@ void Scroller::keyPressEvent(QKeyEvent *event)
     if(event->key() == Qt::Key_Escape){
         if(bFullScreen) showNormal();
         else close();
+    }
+    if(event->key() == Qt::Key_Pause){
+        std::cout << "Pause Button pressed\n";
+        emit pauseButtonPressed();
     }
 }
 
