@@ -268,7 +268,6 @@ void Widget::on_fullScreenButton_clicked()
     ui->label_11->hide();
     ui->toggleLabel->hide();
     //vScrollBar->hide();
-
     auto w = QDesktopWidget().screenGeometry().size().width();
     auto h = QDesktopWidget().screenGeometry().size().height();
     ui->myOGLWidget->move(0, 0);
@@ -277,6 +276,7 @@ void Widget::on_fullScreenButton_clicked()
     resize(w, h);
     ui->myOGLWidget->resize(w, h);
     bFullScreen = true;
+    ui->myOGLWidget->update();
 }
 
 void Widget::standardScreen()
@@ -315,4 +315,5 @@ void Widget::standardScreen()
     resize(wMem, hMem);
     bFullScreen = false;
     parent->setSliderPositions();
+    ui->myOGLWidget->update();
 }
