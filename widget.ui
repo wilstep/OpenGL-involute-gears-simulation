@@ -144,35 +144,35 @@
     <item>
      <widget class="QPushButton" name="pausePlayButton">
       <property name="text">
-       <string>Pause</string>
+       <string>&amp;Pause</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="resetButton">
       <property name="text">
-       <string>Reset</string>
+       <string>&amp;Reset</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="fullScreenButton">
       <property name="text">
-       <string>Full Screen</string>
+       <string>&amp;Full Screen</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="aboutButton">
       <property name="text">
-       <string>About</string>
+       <string>&amp;About</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="quitButton">
       <property name="text">
-       <string>Quit</string>
+       <string>&amp;Quit</string>
       </property>
      </widget>
     </item>
@@ -414,7 +414,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Instructions</string>
+    <string>&amp;Instructions</string>
    </property>
   </widget>
   <widget class="QLabel" name="toggleLabel">
@@ -449,7 +449,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>toggle</string>
+    <string>&amp;Toggle</string>
    </property>
   </widget>
   <widget class="OGLWidget" name="myOGLWidget">

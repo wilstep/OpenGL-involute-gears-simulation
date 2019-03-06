@@ -11,7 +11,13 @@ Widget::Widget(Scroller *iparent) :
     timer = std::make_unique<QTimer>(this);
     connect(timer.get(), SIGNAL(timeout()), this, SLOT(drawOpenGL()));
     connect(parent, SIGNAL(fullScreenExited()), this, SLOT(standardScreen()));
-    connect(parent, SIGNAL(pauseButtonPressed()), this, SLOT(on_pausePlayButton_clicked()));
+    connect(parent, SIGNAL(goFullSceen()), this, SLOT(on_fullScreenButton_clicked()));
+    connect(parent, SIGNAL(instructionButton()), this, SLOT(on_instructionsButton_clicked()));
+    connect(parent, SIGNAL(pauseButton()), this, SLOT(on_pausePlayButton_clicked()));
+    connect(parent, SIGNAL(speedChange(int)), this, SLOT(speedChange(int)));
+    connect(parent, SIGNAL(resetButton()), this, SLOT(on_resetButton_clicked()));
+    connect(parent, SIGNAL(toggleButton()), this, SLOT(on_toggleButton_clicked()));
+    connect(parent, SIGNAL(aboutButton()), this, SLOT(on_aboutButton_clicked()));
     timer->start(25); // delay in milli seconds
     ui->radioButton_14->setEnabled(false);
     ui->radioButton_20->setEnabled(false);
@@ -41,6 +47,12 @@ Widget::~Widget()
     delete ui;
 }
 
+void Widget::speedChange(int ds)
+{
+    int speed = ui->speedScrollBar->value() + ds;
+    ui->speedScrollBar->setValue(speed);
+}
+
 void Widget::on_quitButton_clicked()
 {
     parent->close();
@@ -48,12 +60,44 @@ void Widget::on_quitButton_clicked()
 
 void Widget::keyPressEvent(QKeyEvent *event)
 {
-    if(event->key() == Qt::Key_Escape){
+    switch(event->key())
+    {
+    case Qt::Key_Escape:
         if(bFullScreen) parent->showNormal();
         else parent->close();
-    }
-    if(event->key() == Qt::Key_Pause){
+        break;
+    case Qt::Key_A:
+        on_aboutButton_clicked();
+        break;
+    case Qt::Key_F:
+        on_fullScreenButton_clicked();
+        break;
+    case Qt::Key_I:
+        on_instructionsButton_clicked();
+        break;
+    case Qt::Key_P:
+    case Qt::Key_Pause:
         on_pausePlayButton_clicked();
+        break;
+    case Qt::Key_Q:
+        parent->close();
+        break;
+    case Qt::Key_R:
+        on_resetButton_clicked();
+        break;
+    case Qt::Key_T:
+        on_toggleButton_clicked();
+        break;
+    case Qt::Key_Plus:
+    case Qt::Key_Up:
+    case Qt::Key_Right:
+        speedChange(1);
+        break;
+    case Qt::Key_Minus:
+    case Qt::Key_Down:
+    case Qt::Key_Left:
+        speedChange(-1);
+        break;
     }
 }
 
@@ -72,14 +116,14 @@ void Widget::on_pausePlayButton_clicked()
         Nb = ui->spinBox_Nb->value();
         ui->myOGLWidget->setNb(Nb);
         if(Nchange) ui->myOGLWidget->reZeroThetas();
-        ui->pausePlayButton->setText("Play");
+        ui->pausePlayButton->setText("&Play");
         ui->myOGLWidget->rebuild();
         ui->myOGLWidget->update();
         rebuildGears = false;
         Nchange = false;
     }
     else if(bPause){ // activate simulation
-        ui->pausePlayButton->setText("Pause");
+        ui->pausePlayButton->setText("&Pause");
         ui->myOGLWidget->setPaused(false);
         ui->radioButton_14->setEnabled(false);
         ui->radioButton_20->setEnabled(false);
@@ -90,7 +134,7 @@ void Widget::on_pausePlayButton_clicked()
         bPause = false;
     }
     else{ // pause simulation
-        ui->pausePlayButton->setText("Play");
+        ui->pausePlayButton->setText("&Play");
         ui->myOGLWidget->setPaused(true);
         ui->radioButton_14->setEnabled(true);
         ui->radioButton_20->setEnabled(true);
@@ -222,24 +266,30 @@ void Widget::on_instructionsButton_clicked()
 
 void Widget::on_toggleButton_clicked()
 {
-    rebuildGears = true;
-    ui->pausePlayButton->setText("Rebuild");
+    if(bPause){
+        rebuildGears = true;
+        ui->pausePlayButton->setText("Rebuild");
 
-    if(bExact){
-        ui->toggleLabel->setText("<span style='font-size:10.5pt; font-weight:600;'>Circle Approximation</span>");
-        bExact = false;
+        if(bExact){
+            ui->toggleLabel->setText("<span style='font-size:10.5pt; font-weight:600;'>Circle Approximation</span>");
+            bExact = false;
+        }
+        else{
+            ui->toggleLabel->setText("<span style='font-size:10.5pt; font-weight:600;'>Exact Involute</span>");
+            bExact = true;
+        }
+        ui->myOGLWidget->setBExact(bExact);
+        rebuildGears = true;
+        ui->pausePlayButton->setText("Rebuild");
     }
-    else{
-        ui->toggleLabel->setText("<span style='font-size:10.5pt; font-weight:600;'>Exact Involute</span>");
-        bExact = true;
-    }
-    ui->myOGLWidget->setBExact(bExact);
-    rebuildGears = true;
-    ui->pausePlayButton->setText("Rebuild");
 }
 
 void Widget::on_fullScreenButton_clicked()
 {
+    if(bFullScreen){
+        parent->showNormal();
+        return;
+    }
     parent->storeSliderPositions();
     wMem = width();
     hMem = height();

@@ -14,6 +14,7 @@ public:
     Scroller();  
     void setSliderPositions();
     void storeSliderPositions();
+    void show();
 
 public slots:
     void showFullScreen();
@@ -29,7 +30,13 @@ private:
 
 signals:
     void fullScreenExited();
-    void pauseButtonPressed();
+    void goFullSceen();
+    void instructionButton();
+    void pauseButton();
+    void speedChange(int);
+    void resetButton();
+    void aboutButton();
+    void toggleButton();
 };
 
 #endif // SCROLLER_H

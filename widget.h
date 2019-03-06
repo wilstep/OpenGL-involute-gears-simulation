@@ -44,6 +44,7 @@ private slots:
     void on_toggleButton_clicked();
     void on_fullScreenButton_clicked();
     void standardScreen();
+    void speedChange(int);
 
 private:
     Ui::Widget *ui;
