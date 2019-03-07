@@ -67,5 +67,8 @@ int main(int argc, char *argv[])
     scroller->setWindowIcon(icon);
     scroller->show();
 
+#ifdef _WIN32
+    app.setStyle("fusion");
+#endif
     return app.exec();
 }

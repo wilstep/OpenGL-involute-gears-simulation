@@ -44,9 +44,11 @@ private slots:
     void on_toggleButton_clicked();
     void on_fullScreenButton_clicked();
     void standardScreen();
-    void speedChange(int);
+    void keySwitcher(int key);
 
 private:
+    void speedChange(int);
+
     Ui::Widget *ui;
     std::unique_ptr<QTimer> timer;
     bool bPause = false, bFullScreen = false;

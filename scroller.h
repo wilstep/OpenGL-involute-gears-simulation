@@ -24,19 +24,11 @@ private slots:
     void keyPressEvent(QKeyEvent *event);
 
 private:
-    bool bFullScreen = false;
-
     int hValue, vValue;
 
 signals:
     void fullScreenExited();
-    void goFullSceen();
-    void instructionButton();
-    void pauseButton();
-    void speedChange(int);
-    void resetButton();
-    void aboutButton();
-    void toggleButton();
+    void keyPressed(int key);
 };
 
 #endif // SCROLLER_H

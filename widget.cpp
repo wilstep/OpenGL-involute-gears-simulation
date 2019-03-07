@@ -11,13 +11,7 @@ Widget::Widget(Scroller *iparent) :
     timer = std::make_unique<QTimer>(this);
     connect(timer.get(), SIGNAL(timeout()), this, SLOT(drawOpenGL()));
     connect(parent, SIGNAL(fullScreenExited()), this, SLOT(standardScreen()));
-    connect(parent, SIGNAL(goFullSceen()), this, SLOT(on_fullScreenButton_clicked()));
-    connect(parent, SIGNAL(instructionButton()), this, SLOT(on_instructionsButton_clicked()));
-    connect(parent, SIGNAL(pauseButton()), this, SLOT(on_pausePlayButton_clicked()));
-    connect(parent, SIGNAL(speedChange(int)), this, SLOT(speedChange(int)));
-    connect(parent, SIGNAL(resetButton()), this, SLOT(on_resetButton_clicked()));
-    connect(parent, SIGNAL(toggleButton()), this, SLOT(on_toggleButton_clicked()));
-    connect(parent, SIGNAL(aboutButton()), this, SLOT(on_aboutButton_clicked()));
+    connect(parent, SIGNAL(keyPressed(int)), this, SLOT(keySwitcher(int)));
     timer->start(25); // delay in milli seconds
     ui->radioButton_14->setEnabled(false);
     ui->radioButton_20->setEnabled(false);
@@ -58,9 +52,9 @@ void Widget::on_quitButton_clicked()
     parent->close();
 }
 
-void Widget::keyPressEvent(QKeyEvent *event)
+void Widget::keySwitcher(int key)
 {
-    switch(event->key())
+    switch(key)
     {
     case Qt::Key_Escape:
         if(bFullScreen) parent->showNormal();
@@ -70,7 +64,8 @@ void Widget::keyPressEvent(QKeyEvent *event)
         on_aboutButton_clicked();
         break;
     case Qt::Key_F:
-        on_fullScreenButton_clicked();
+        if(bFullScreen) parent->showNormal();
+        else on_fullScreenButton_clicked();
         break;
     case Qt::Key_I:
         on_instructionsButton_clicked();
@@ -89,16 +84,19 @@ void Widget::keyPressEvent(QKeyEvent *event)
         on_toggleButton_clicked();
         break;
     case Qt::Key_Plus:
-    case Qt::Key_Up:
     case Qt::Key_Right:
         speedChange(1);
         break;
     case Qt::Key_Minus:
-    case Qt::Key_Down:
     case Qt::Key_Left:
         speedChange(-1);
         break;
     }
+}
+
+void Widget::keyPressEvent(QKeyEvent *event)
+{
+    keySwitcher(event->key());
 }
 
 void Widget::on_resetButton_clicked()
