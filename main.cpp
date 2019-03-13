@@ -5,6 +5,10 @@
 #include <QIcon>
 #include <fstream>
 
+#ifdef _WIN32
+    #include <QWinTaskbarButton>
+#endif
+
 //class MyApplication : public QGuiApplication
 class MyApplication : public QApplication
 {
@@ -63,12 +67,16 @@ int main(int argc, char *argv[])
     w = (w > 1392) ? 1392 : w;
     h = (h > 922) ? 922 : h;
     scroller->resize(w, h);
-    QIcon icon(":/gears.png");
+    QIcon icon(":/gears.bmp");
     scroller->setWindowIcon(icon);
-    scroller->show();
 
 #ifdef _WIN32
     app.setStyle("fusion");
+    QWinTaskbarButton *button = new QWinTaskbarButton(scroller);
+    button->setWindow(scroller->windowHandle());
+    button->setOverlayIcon(icon);
 #endif
+
+    scroller->show();
     return app.exec();
 }

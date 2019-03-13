@@ -52,6 +52,8 @@ void Widget::on_quitButton_clicked()
     parent->close();
 }
 
+// switch method to handle KeyPressEvent
+// also called by scroller oject's KeyPressEvent via key & slot
 void Widget::keySwitcher(int key)
 {
     switch(key)
@@ -234,7 +236,8 @@ void Widget::on_aboutButton_clicked()
     msgBox.setWindowTitle("Involute Gear Simulator");
 
     std::string msg = "This software was made and developed by Stephen R. Williams"
-        "<br>Feb 2019"
+        "<br>March 2019"
+        "<br>Version 1.3.2"
         "<br><br>See <a href='https://swtinkering.blogspot.com/2019/02/involute-gear-simulator-built-with-qt.html'>blog</a> entry for more details"
         "<br><br>License GPL-3.0<br><br>";
     msg += ui->myOGLWidget->getOGLVersionInfo();

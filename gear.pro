@@ -8,8 +8,8 @@
 unix: QMAKE_CXXFLAGS += -std=c++14
 # for windows
 win32: CONFIG += c++14
-
 QT       += core gui
+win32: QT += winextras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -31,8 +31,7 @@ HEADERS  += myshaders.h \
 
 FORMS    += widget.ui
 
-DISTFILES += \
-    gears.png
+DISTFILES +=
 
 RESOURCES += \
     resource.qrc
