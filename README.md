@@ -5,7 +5,7 @@ This software is written with QT creator 3.5.1 and uses OpenGL
 
 to compile on Linux
 
-install QT, perhaps: `sudo apt install qtbase5-dev`
+install QT, perhaps: `sudo apt-get install qtbase5-dev`
 
 `qmake gear.pro`
 
