@@ -7,6 +7,7 @@ You will need a graphics card with working OpenGL drivers
 to compile on Linux
 
 install QT, perhaps: `sudo apt-get install qtbase5-dev`
+then
 
 `qmake gear.pro`
 
