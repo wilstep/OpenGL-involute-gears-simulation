@@ -18,4 +18,4 @@ then run
 
 Or load project into QT Creator and compile
 
-a 32bit Windows binary may be found here with the latest release
+a 32bit Windows binary may be found here at the latest release
