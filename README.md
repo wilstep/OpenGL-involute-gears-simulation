@@ -1,7 +1,7 @@
 # OpenGL-involute-gears-simulation
 
 A realistic graphical simulation of one involute gear driving another
-This software is written with QT creator 3.5.1 and uses OpenGL 
+This software is written with QT creator 3.5.1 and uses OpenGL. 
 You will need a graphics card with working OpenGL drivers
 
 to compile on Linux
