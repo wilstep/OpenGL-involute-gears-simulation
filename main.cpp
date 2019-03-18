@@ -4,64 +4,67 @@
 #include <QScrollArea>
 #include <QIcon>
 #include <fstream>
+#include <memory>
 
 #ifdef _WIN32
     #include <QWinTaskbarButton>
 #endif
 
-//class MyApplication : public QGuiApplication
+
 class MyApplication : public QApplication
 {
 public:
     MyApplication(int &argc, char **argv) : QApplication(argc, argv) {}
-
-    bool notify(QObject* receiver, QEvent* event) Q_DECL_OVERRIDE
-    {
-        try {
-            return QApplication::notify(receiver, event);
-        }
-        catch (std::ifstream::failure e) {
-            std::ofstream fout("exception.log", std::ios::app);
-            fout << "ifstream file error: " << e.what() << std::endl;
-            fout.close();
-            exit(1);
-        }
-        catch(const std::runtime_error &e){
-            std::ofstream fout("exception.log", std::ios::app);
-            fout << "Runtime error: "  << e.what() << std::endl;
-            fout.close();
-            exit(1);
-        }
-        catch(const std::out_of_range &e){
-            std::ofstream fout("exception.log", std::ios::app);
-            fout << "Out of Range error: " << e.what() << '\n';
-            fout.close();
-            exit(1);
-        }
-        catch (const std::bad_alloc &e){
-            std::ofstream fout("exception.log", std::ios::app);
-            fout << "Allocation error: " << e.what() << std::endl;
-            fout.close();
-            exit(1);
-        }
-        catch(std::exception &e){
-            std::ofstream fout("exception.log", std::ios::app);
-            fout << "unspecified standard exception caught: " << e.what() << std::endl;
-            fout.close();
-            exit(1);
-        }
-        return false;
-     }
+    bool notify(QObject* receiver, QEvent* event) override;
 };
+
+bool MyApplication::notify(QObject* receiver, QEvent* event)
+
+{
+    try {
+        return QApplication::notify(receiver, event);
+    }
+    catch (std::ifstream::failure e) {
+        std::ofstream fout("exception.log", std::ios::app);
+        fout << "ifstream file error: " << e.what() << std::endl;
+        fout.close();
+        exit(1);
+    }
+    catch(const std::runtime_error &e){
+        std::ofstream fout("exception.log", std::ios::app);
+        fout << "Runtime error: "  << e.what() << std::endl;
+        fout.close();
+        exit(1);
+    }
+    catch(const std::out_of_range &e){
+        std::ofstream fout("exception.log", std::ios::app);
+        fout << "Out of Range error: " << e.what() << '\n';
+        fout.close();
+        exit(1);
+    }
+    catch (const std::bad_alloc &e){
+        std::ofstream fout("exception.log", std::ios::app);
+        fout << "Allocation error: " << e.what() << std::endl;
+        fout.close();
+       exit(1);
+    }
+    catch(std::exception &e){
+        std::ofstream fout("exception.log", std::ios::app);
+        fout << "unspecified standard exception caught: " << e.what() << std::endl;
+        fout.close();
+        exit(1);
+    }
+    return false;
+}
 
 
 int main(int argc, char *argv[])
 {
     MyApplication app(argc, argv);
     
-    Scroller *scroller = new Scroller;
-    Widget *wiget = new Widget(scroller);
-    scroller->setWidget(wiget);
+    auto scroller = std::make_unique<Scroller>();
+    auto wiget = std::make_unique<Widget>(scroller.get());
+    scroller->setWidget(wiget.get());
     auto w = QDesktopWidget().availableGeometry().width();
     auto h = QDesktopWidget().availableGeometry().height();
     w = (w > 1392) ? 1392 : w;
@@ -72,7 +75,7 @@ int main(int argc, char *argv[])
 
 #ifdef _WIN32
     app.setStyle("fusion");
-    QWinTaskbarButton *button = new QWinTaskbarButton(scroller);
+    auto button = std::make_unique<QWinTaskbarButton>(scroller.get());
     button->setWindow(scroller->windowHandle());
     button->setOverlayIcon(icon);
 #endif
