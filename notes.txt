@@ -1,1 +1,0 @@
-Added slider functionality for smaller screens, full screen mode, ability to change distance between gears and a toggle ability to use a circle approximation for the involute. Fixed some bugs and other small changes.
